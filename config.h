@@ -1,5 +1,5 @@
 /*
- * config.h: a9wm configuration
+ * config.h: ntwm configuration
  */
 
 #define VER "0.1.0"
