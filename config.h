@@ -24,7 +24,6 @@ const key keys[] = {
 /* Mask         Keysym      Function  Argument */
   {MASK|SHIFT,  XK_e,       "quit",   NULL},
   {MASK,        XK_Return,  "spawn",  TERMCMD},
-  {MASK|SHIFT,  XK_p,       "spawn",  LOCKCMD},
   {MASK|SHIFT,  XK_q,       "kill",   NULL},
   {MASK,        XK_f,       "gaps",   NULL}
 };
