@@ -1,0 +1,2 @@
+xterm &
+exec /home/andrew/Development/ntwm/ntwm
