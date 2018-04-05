@@ -11,7 +11,7 @@
 #include <X11/keysym.h>
 
 #include "config.h"
-#include "dynam.h"
+#include "list.h"
 #include "logging.h"
 
 bool running = true;

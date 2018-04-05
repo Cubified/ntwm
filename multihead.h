@@ -6,7 +6,7 @@
 #define __MULTIHEAD_H
 
 typedef struct monitor {
-  arr *windows;
+  list_node *windows;
   int width;
   int height;
   int x;
@@ -99,7 +99,7 @@ void multihead_setup(){
     res_reply[i] = xcb_randr_get_crtc_info_reply(conn,res_cookie[i],0);
 
     monitor *monitor = malloc(sizeof(monitor));
-    monitor->windows = arr_init();
+    monitor->windows = list_init();
     monitor->width = res_reply[i]->width;
     monitor->height = res_reply[i]->height;
     monitor->x = res_reply[i]->x;
@@ -114,7 +114,7 @@ void multihead_free(){
   node *iterator = monitors;
   while(iterator != NULL){
     if(iterator->monitor != NULL){
-      arr_free(iterator->monitor->windows);
+      list_freeall(iterator->monitor->windows);
     }
     iterator = iterator->next;
     if(iterator != NULL && iterator->prev != NULL){

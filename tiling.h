@@ -5,9 +5,9 @@
 #ifndef __TILING_H
 #define __TILING_H
 
-static void tile(arr *array);
+static void tile(list_node *list);
 
-void tile(arr *array){
+void tile(list_node *list){
   int clients_count, i,
     cols, rows,
     col_height, col_width,
@@ -17,7 +17,7 @@ void tile(arr *array){
     gaps;
   monitor *current_monitor;
 
-  clients_count = array->count;
+  clients_count = list_sizeof(list);
   if(clients_count == 0){
     return;
   }
@@ -41,8 +41,9 @@ void tile(arr *array){
   col_width = (current_monitor->width - gaps) / (cols ? cols : 1)+2;
   col_number = 0;
   row_number = 0;
+  i = 0;
 
-  for(i=0;i<clients_count;i++){
+  LIST_NODE_FOREACH_NOROOT(list){
     if(i / rows + 1 > cols - clients_count % cols){
       rows = clients_count / cols + 1;
     }
@@ -53,7 +54,7 @@ void tile(arr *array){
     h = (col_height / rows) - gaps;
 
     move_resize(
-      array->data[i],
+      iterator->window,
       x, y,
       w, h
     );
@@ -62,6 +63,7 @@ void tile(arr *array){
       row_number = 0;
       col_number++;
     }
+    i++;
   }
 }
 #endif

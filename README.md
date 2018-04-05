@@ -15,7 +15,7 @@ ntwm was written from scratch using Xlib (although a major TODO is to convert to
 | ntwm (multimonitor support)    | 15kb  |
 | dwm                            | 33kb  |
 | 2bwm                           | 36kb  |
-| i3							 | 343kb |
+| i3                             | 343kb |
 
 ### Resource Usage
 
@@ -26,9 +26,9 @@ TODO, although not particularly important
 ### Prerequisites:
 
     libX11, libxcb
-	gcc, make, pkg-config
+    gcc, make, pkg-config
 
-gcc is not necessarily required (can be replaced by tcc), but clang is not supported (due to VLA usage)
+gcc is not necessarily required (tcc or clang can take its place)
 
 ### To compile:
 
@@ -52,7 +52,6 @@ All configuration is done through `config.h`, and provided options should be rel
 
 ## To-Do
 
-* Replace `dynam.h` with linked lists
 * Convert to xcb
-	* Note:  `multihead.h` already uses xcb
+  * Note:  `multihead.h` already uses xcb
 * Add general polish
