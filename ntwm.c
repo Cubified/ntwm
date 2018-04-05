@@ -43,8 +43,8 @@ int main(){
   gaps_enabled = 1;
 
   if(dpy == NULL){
-	error("Failed to open display.\n");
-	quit();
+    error("Failed to open display.\n");
+    quit();
     return 1;
   }
 
@@ -54,31 +54,31 @@ int main(){
   establish_keybinds(DefaultRootWindow(dpy));
 
   XSync(dpy,false);
-	
+    
   multihead_setup();
-	
+    
   if(!last_err){
     spawn(autostartcmd);
   }
 
   while(running){
     XNextEvent(dpy, &e);
-	switch(e.type){
-	  case MapRequest:
-	    map_request(&e);
-		break;
-	  case ConfigureRequest:
-		configure_request(&e);
-		break;
-	  case UnmapNotify:
-		unmap_notify(&e);
-		break;
-	  case EnterNotify:
-		enter_notify(&e);
-		break;
-	  case KeyPress:
-		key_press(&e);
-		break;
+    switch(e.type){
+      case MapRequest:
+        map_request(&e);
+        break;
+      case ConfigureRequest:
+        configure_request(&e);
+        break;
+      case UnmapNotify:
+        unmap_notify(&e);
+        break;
+      case EnterNotify:
+        enter_notify(&e);
+        break;
+      case KeyPress:
+        key_press(&e);
+        break;
     }
   }
 

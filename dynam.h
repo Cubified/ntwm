@@ -29,7 +29,7 @@ void arr_resize(arr *array, int newsize){
   }
   struct arr_new {
     int count;
-	Window data[newsize];
+    Window data[newsize];
   };
   arr *newarr = malloc(sizeof(struct arr_new));
   newarr->count = newsize;
@@ -50,14 +50,14 @@ void arr_pop(arr *array, Window win){
   int found = 0;
   for(int i=0;i<array->count;i++){
     if(array->data[i] == win){
-	  index = i;
-	  found = 1;
-	}
+      index = i;
+      found = 1;
+    }
   }
   if(found){
     for(int i=index;i<array->count-1;i++){
-	  array->data[i] = array->data[i+1];
-	}
+      array->data[i] = array->data[i+1];
+    }
     arr_resize(array, array->count-1);
   }
 }
