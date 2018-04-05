@@ -1,5 +1,5 @@
 /*
- * config.h: ntwm configuration
+ * config.h: a9wm configuration
  */
 
 #define VER "0.1.0"
@@ -8,24 +8,22 @@
 #define MASK Mod1Mask
 #define SHIFT ShiftMask
 
-#define TERMCMD "xfce4-terminal"
+#define TERMCMD     "xterm"
 
 const bool log_colors = true;
-const char *autostartcmd = "true";
+const char *autostartcmd = "/home/andrew/.2bwm/autostart.sh";
 
 typedef struct key {
-	unsigned int mod;
-	KeySym keysym;
-	const char *func;
-	const char *arg;
+  unsigned int mod;
+  KeySym keysym;
+  const char *func;
+  const char *arg;
 } key;
 
 const key keys[] = {
-/*	Mask		Keysym		Command			Argument */
-	{MASK|SHIFT,
-				XK_e,		"quit",			NULL},
-	{MASK,		XK_Return,	"spawn",		TERMCMD},
-	{MASK|SHIFT,
-				XK_q,		"kill",			NULL},
-	{MASK,		XK_f,		"gaps",			NULL}	/* Toggles gaps between windows, entering a "fullscreen" mode */
+/* Mask         Keysym      Function  Argument */
+  {MASK|SHIFT,  XK_e,       "quit",   NULL},
+  {MASK,        XK_Return,  "spawn",  TERMCMD},
+  {MASK|SHIFT,  XK_q,       "kill",   NULL},
+  {MASK,        XK_f,       "gaps",   NULL}
 };

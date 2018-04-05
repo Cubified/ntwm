@@ -35,58 +35,58 @@ Screen *screen;
 #include "events.h"
 
 int main(){
-	info("ntwm v" VER " starting up.");
+  info("ntwm v" VER " starting up.");
 
-	dpy = XOpenDisplay(0x0);
-	screen = XDefaultScreenOfDisplay(dpy);
+  dpy = XOpenDisplay(0x0);
+  screen = XDefaultScreenOfDisplay(dpy);
 
-	gaps_enabled = 1;
+  gaps_enabled = 1;
 
-	if(dpy == NULL){
-		error("Failed to open display.\n");
-		quit();
-		return 1;
-	}
+  if(dpy == NULL){
+	error("Failed to open display.\n");
+	quit();
+    return 1;
+  }
 
-	XSetErrorHandler(&on_x_error);
+  XSetErrorHandler(&on_x_error);
 
-	select_input(DefaultRootWindow(dpy));
-	establish_keybinds(DefaultRootWindow(dpy));
+  select_input(DefaultRootWindow(dpy));
+  establish_keybinds(DefaultRootWindow(dpy));
 
-	XSync(dpy,false);
+  XSync(dpy,false);
 	
-	multihead_setup();
+  multihead_setup();
 	
-	if(!last_err){
-		spawn(autostartcmd);
-	}
+  if(!last_err){
+    spawn(autostartcmd);
+  }
 
-	while(running){
-        XNextEvent(dpy, &e);
-		switch(e.type){
-			case MapRequest:
-				map_request(&e);
-				break;
-			case ConfigureRequest:
-				configure_request(&e);
-				break;
-			case UnmapNotify:
-				unmap_notify(&e);
-				break;
-			case EnterNotify:
-				enter_notify(&e);
-				break;
-			case KeyPress:
-				key_press(&e);
-				break;
-		}
+  while(running){
+    XNextEvent(dpy, &e);
+	switch(e.type){
+	  case MapRequest:
+	    map_request(&e);
+		break;
+	  case ConfigureRequest:
+		configure_request(&e);
+		break;
+	  case UnmapNotify:
+		unmap_notify(&e);
+		break;
+	  case EnterNotify:
+		enter_notify(&e);
+		break;
+	  case KeyPress:
+		key_press(&e);
+		break;
     }
+  }
 
-	info("ntwm shutting down.");
+  info("ntwm shutting down.");
 
-	XCloseDisplay(dpy);
+  XCloseDisplay(dpy);
 
-	multihead_free();
+  multihead_free();
 
-	return last_err;
+  return last_err;
 }
