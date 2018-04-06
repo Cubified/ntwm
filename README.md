@@ -1,4 +1,4 @@
-# ntwm v0.1.0
+# ntwm v0.5.0
 
 A tiny, frameless, grid-tiling window manager with multimonitor support.
 

@@ -5,7 +5,7 @@ CC=gcc
 CFLAGS=`pkg-config --cflags x11 xcb xcb-randr`	# Remove xcb and xcb-randr if not using multihead
 LIBS=`pkg-config --libs x11 xcb xcb-randr`	# See above
 
-FLAGS=-pipe -s
+FLAGS=-O2 -pipe -s
 DEBUGFLAGS=-Og -Wall -pipe -g
 
 SOURCES=ntwm.c

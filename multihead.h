@@ -19,6 +19,16 @@ typedef struct node {
   struct node *prev;
 } node;
 
+static void node_free(node *node);
+static void node_push(node *root, monitor *monitor);
+static void node_pop(node *root, monitor *monitor);
+static node *node_get(node *root, int index);
+static node *node_init();
+
+static void multihead_setup();
+static void multihead_free();
+static monitor *find_monitor();
+
 node *node_init(){
   node *new_node = malloc(sizeof(node));
   new_node->monitor = NULL;
