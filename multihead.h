@@ -169,7 +169,7 @@ monitor *find_monitor(){
 void multihead_setup(){
   monitors = node_init();
   monitor *monitor = malloc(sizeof(monitor));
-  monitor->windows = arr_init();
+  monitor->windows = list_init();
   monitor->width = XWidthOfScreen(screen);
   monitor->height = XHeightOfScreen(screen);
   monitor->x = 0;
@@ -181,7 +181,7 @@ void multihead_free(){
   node *iterator = monitors;
   while(iterator != NULL){
     if(iterator->monitor != NULL){
-      arr_free(iterator->monitor->windows);
+      list_free(iterator->monitor->windows);
     }
     iterator = iterator->next;
     if(iterator != NULL && iterator->prev != NULL){
