@@ -75,5 +75,7 @@ void key_press(XEvent *e){
 void enter_notify(XEvent *e){
   XCrossingEvent *ev = &e->xcrossing;
   focused = ev->window;
+
+  XSetInputFocus(dpy,ev->window,RevertToParent,CurrentTime);
 }
 #endif

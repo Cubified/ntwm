@@ -21,8 +21,8 @@ typedef struct node {
 
 static void node_free(node *node);
 static void node_push(node *root, monitor *monitor);
-static void node_pop(node *root, monitor *monitor);
-static node *node_get(node *root, int index);
+//static void node_pop(node *root, monitor *monitor);
+//static node *node_get(node *root, int index);
 static node *node_init();
 
 static void multihead_setup();
@@ -52,7 +52,7 @@ void node_push(node *root, monitor *monitor){
   new_node->prev = iterator;
   iterator->next = new_node;
 }
-
+/*
 void node_pop(node *root, monitor *monitor){
   node *iterator = root;
   while(iterator->next->monitor != monitor){
@@ -69,7 +69,7 @@ node *node_get(node *root, int index){
   }
   return iterator;
 }
-
+*/
 node *monitors;
 
 #ifdef MULTIHEAD

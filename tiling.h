@@ -28,8 +28,6 @@ void tile(list_node *list){
     }
   }
 
-  gaps = (gaps_enabled ? GAPS : 0);
-
   rows = clients_count / cols;
   current_monitor = find_monitor();
 
@@ -37,8 +35,10 @@ void tile(list_node *list){
     error("Could not locate monitor.");
   }
 
+  gaps = (gaps_enabled ? GAPS : 0);
+
   col_height = current_monitor->height - gaps;
-  col_width = (current_monitor->width - gaps) / (cols ? cols : 1)+2;
+  col_width = (current_monitor->width - gaps) / (cols ? cols : 1);
   col_number = 0;
   row_number = 0;
   i = 0;

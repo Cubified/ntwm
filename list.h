@@ -30,14 +30,18 @@ void list_push(list_node *root, Window win){
 }
 
 void list_pop(list_node *root, Window win){
+  int found = 0;
   LIST_NODE_FOREACH(root){
     if(iterator->next != NULL && iterator->next->window == win){
+      found = 1;
       break;
     }
   }
-  list_node *copy = iterator->next->next;
-  list_free(iterator->next);
-  iterator->next = copy;
+  if(found){
+    list_node *copy = iterator->next->next;
+    list_free(iterator->next);
+    iterator->next = copy;
+  }
 }
 
 void list_free(list_node *n){

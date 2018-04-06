@@ -38,12 +38,18 @@ int main(){
   info("ntwm v" VER " starting up.");
 
   dpy = XOpenDisplay(0x0);
-  screen = XDefaultScreenOfDisplay(dpy);
 
   gaps_enabled = 1;
 
   if(dpy == NULL){
-    error("Failed to open display.\n");
+    error("Failed to open display.");
+    quit();
+    return 1;
+  }
+
+  screen = XDefaultScreenOfDisplay(dpy);
+  if(screen == NULL){
+    error("Failed to detect default screen.");
     quit();
     return 1;
   }
