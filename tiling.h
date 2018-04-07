@@ -35,7 +35,7 @@ void tile(list_node *list){
     error("Could not locate monitor.");
   }
 
-  gaps = (gaps_enabled ? GAPS : 0);
+  gaps = (current_monitor->gaps_enabled ? GAPS : 0);
 
   col_height = current_monitor->height - gaps;
   col_width = (current_monitor->width - gaps) / (cols ? cols : 1);

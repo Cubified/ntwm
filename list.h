@@ -18,7 +18,9 @@ typedef struct list_node {
 static void list_push(list_node *root, Window win);
 static void list_pop(list_node *root, Window win);
 static void list_free(list_node *n);
+#ifdef MULTIHEAD
 static void list_freeall(list_node *root);
+#endif
 static int list_sizeof(list_node *root);
 static list_node *list_init();
 
@@ -48,12 +50,14 @@ void list_free(list_node *n){
   free(n);
 }
 
+#ifdef MULTIHEAD
 void list_freeall(list_node *root){
   LIST_NODE_FOREACH(root){
     list_node *copy = iterator;
     free(copy);
   }
 }
+#endif
 
 int list_sizeof(list_node *root){
   int size = -1;

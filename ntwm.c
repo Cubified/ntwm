@@ -22,7 +22,6 @@ const char *last_call = "";
 int last_err = 0;
 int monitor_width;
 int monitor_height;
-int gaps_enabled;
 
 Display *dpy;
 XEvent e;
@@ -38,8 +37,6 @@ int main(){
   info("ntwm v" VER " starting up.");
 
   dpy = XOpenDisplay(0x0);
-
-  gaps_enabled = 1;
 
   if(dpy == NULL){
     error("Failed to open display.");

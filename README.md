@@ -52,6 +52,7 @@ All configuration is done through `config.h`, and provided options should be rel
 
 ## To-Do
 
+* Workspace support
 * Convert to xcb
   * Note:  `multihead.h` already uses xcb
 * Add general polish

@@ -30,6 +30,7 @@ void map_request(XEvent *e){
 
 void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
+  last_call = "configure";
   move_resize(
     ev->window,
     ev->x, ev->y,
@@ -53,7 +54,10 @@ void key_press(XEvent *e){
   XKeyEvent *ev = &e->xkey;
   KeySym keysym = XkbKeycodeToKeysym(dpy, ev->keycode, 0, 0);
 
-  list_node *list = find_monitor()->windows;
+  last_call = "keypress";
+
+  monitor *current_monitor = find_monitor();
+  list_node *list = current_monitor->windows;
 
   for(int i=0;i<LENGTH(keys);i++){
     if(keys[i].keysym == keysym &&
@@ -65,8 +69,15 @@ void key_press(XEvent *e){
       } else if(strcmp(keys[i].func,"kill") == 0){
         kill_focused();
       } else if(strcmp(keys[i].func,"gaps") == 0){
-        gaps_enabled = !gaps_enabled;
+        current_monitor->gaps_enabled = !current_monitor->gaps_enabled;
         tile(list);
+      } else if(strcmp(keys[i].func,"full") == 0){
+        move_resize(
+          focused,
+          0, 0,
+          current_monitor->width,
+          current_monitor->height
+        );
       }
     }
   }
@@ -75,6 +86,7 @@ void key_press(XEvent *e){
 void enter_notify(XEvent *e){
   XCrossingEvent *ev = &e->xcrossing;
   focused = ev->window;
+  last_call = "enter";
 
   XSetInputFocus(dpy,ev->window,RevertToParent,CurrentTime);
 }

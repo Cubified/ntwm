@@ -25,5 +25,6 @@ const key keys[] = {
   {MASK|SHIFT,  XK_e,       "quit",   NULL},
   {MASK,        XK_Return,  "spawn",  TERMCMD},
   {MASK|SHIFT,  XK_q,       "kill",   NULL},
-  {MASK,        XK_f,       "gaps",   NULL}
+  {MASK,        XK_f,       "gaps",   NULL},
+  {MASK|SHIFT,  XK_f,       "full",   NULL}
 };

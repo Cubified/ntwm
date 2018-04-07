@@ -11,6 +11,7 @@ typedef struct monitor {
   int height;
   int x;
   int y;
+  bool gaps_enabled;
 } monitor;
 
 typedef struct node {
@@ -22,7 +23,9 @@ typedef struct node {
 static void node_free(node *node);
 static void node_push(node *root, monitor *monitor);
 //static void node_pop(node *root, monitor *monitor);
-//static node *node_get(node *root, int index);
+#ifndef MULTIHEAD
+static node *node_get(node *root, int index);
+#endif
 static node *node_init();
 
 static void multihead_setup();
@@ -61,7 +64,8 @@ void node_pop(node *root, monitor *monitor){
   iterator->next = iterator->next->next;
   iterator->next->prev = iterator;
 }
-
+*/
+#ifndef MULTIHEAD
 node *node_get(node *root, int index){
   node *iterator = root;
   for(int i=0;i<index+1;i++){
@@ -69,7 +73,8 @@ node *node_get(node *root, int index){
   }
   return iterator;
 }
-*/
+#endif
+
 node *monitors;
 
 #ifdef MULTIHEAD
@@ -114,7 +119,10 @@ void multihead_setup(){
     monitor->height = res_reply[i]->height;
     monitor->x = res_reply[i]->x;
     monitor->y = res_reply[i]->y;
+    monitor->gaps_enabled = true;
     node_push(monitors,monitor);
+
+    free(res_reply[i]);
   }
 
   xcb_disconnect(conn);
@@ -174,6 +182,7 @@ void multihead_setup(){
   monitor->height = XHeightOfScreen(screen);
   monitor->x = 0;
   monitor->y = 0;
+  monitor->gaps_enabled = true;
   node_push(monitors,monitor);
 }
 
