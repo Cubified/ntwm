@@ -6,6 +6,8 @@
 #define __TILING_H
 
 static void tile(list_node *list);
+static void toggle_gaps(monitor *current_monitor);
+static void toggle_fullscreen(monitor *current_monitor, Window win);
 
 void tile(list_node *list){
   int clients_count, i,
@@ -53,6 +55,15 @@ void tile(list_node *list){
     w = col_width - gaps;
     h = (col_height / rows) - gaps;
 
+    if(current_monitor->fullscreen_enabled && current_monitor->fullscreen == iterator->window){
+      x = 0;
+      y = 0;
+      w = current_monitor->width;
+      h = current_monitor->height;
+
+      XRaiseWindow(dpy,iterator->window);
+    }
+
     move_resize(
       iterator->window,
       x, y,
@@ -65,6 +76,19 @@ void tile(list_node *list){
     }
     i++;
   }
+}
+
+void toggle_gaps(monitor *current_monitor){
+  current_monitor->gaps_enabled = !current_monitor->gaps_enabled;
+  tile(current_monitor->windows);
+}
+
+void toggle_fullscreen(monitor *current_monitor, Window win){
+  current_monitor->fullscreen_enabled = !current_monitor->fullscreen_enabled;
+  if(current_monitor->fullscreen_enabled){
+    current_monitor->fullscreen = focused;
+  }
+  tile(current_monitor->windows);
 }
 
 #endif

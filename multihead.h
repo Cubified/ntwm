@@ -12,6 +12,8 @@ typedef struct monitor {
   int x;
   int y;
   bool gaps_enabled;
+  bool fullscreen_enabled;
+  Window fullscreen;
 } monitor;
 
 typedef struct node {
@@ -120,6 +122,8 @@ void multihead_setup(){
     monitor->x = res_reply[i]->x;
     monitor->y = res_reply[i]->y;
     monitor->gaps_enabled = true;
+    monitor->fullscreen_enabled = false;
+    monitor->fullscreen = 0;
     node_push(monitors,monitor);
 
     free(res_reply[i]);
@@ -183,6 +187,8 @@ void multihead_setup(){
   monitor->x = 0;
   monitor->y = 0;
   monitor->gaps_enabled = true;
+  monitor->fullscreen_enabled = false;
+  monitor->fullscreen = NULL;
   node_push(monitors,monitor);
 }
 

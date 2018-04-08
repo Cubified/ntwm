@@ -57,7 +57,6 @@ void key_press(XEvent *e){
   last_call = "keypress";
 
   monitor *current_monitor = find_monitor();
-  list_node *list = current_monitor->windows;
 
   for(int i=0;i<LENGTH(keys);i++){
     if(keys[i].keysym == keysym &&
@@ -69,15 +68,9 @@ void key_press(XEvent *e){
       } else if(strcmp(keys[i].func,"kill") == 0){
         kill_focused();
       } else if(strcmp(keys[i].func,"gaps") == 0){
-        current_monitor->gaps_enabled = !current_monitor->gaps_enabled;
-        tile(list);
+        toggle_gaps(current_monitor);
       } else if(strcmp(keys[i].func,"full") == 0){
-        move_resize(
-          focused,
-          0, 0,
-          current_monitor->width,
-          current_monitor->height
-        );
+        toggle_fullscreen(current_monitor,focused);
       }
     }
   }
