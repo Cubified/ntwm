@@ -8,6 +8,7 @@
 typedef struct node {
   void *data;
   unsigned int data_noptr;
+  int size;
   struct node *next;
   struct node *prev;
   struct node *end;
@@ -51,6 +52,7 @@ node *list_init(){
   node *root = node_create();
   root->data = NULL;
   root->data_noptr = 0;
+  root->size = 0;
   root->next = NULL;
   root->prev = NULL;
   root->end = NULL;
@@ -65,6 +67,7 @@ node *list_init(){
 node *list_push(node *root){
   node *elem = node_create();
 
+  elem->size = 0;
   elem->next = NULL;
   elem->prev = root->end;
   elem->end = NULL;
@@ -76,7 +79,10 @@ node *list_push(node *root){
 
   if(root->next == NULL){
     root->next = elem;
+    elem->prev = root;
   }
+
+  root->size++;
 
   return elem;
 }
@@ -124,18 +130,23 @@ node *list_get(node *root, int index){
  * nothing if not found)
  */
 void list_pop(node *root, node *elem){
-  list_foreach(root){
-    if(itr->next == elem){
-      itr->next = elem->next;
-      if(itr->next != NULL){
-        itr->next->prev = itr;
-      }
-      
-      free(elem);
+  elem->prev->next = elem->next;
+  
+  if(elem->next != NULL){
+    elem->next->prev = elem->prev;
+  }
 
-      break;
+  if(root->end == elem){
+    if(elem->next == NULL){
+      root->end = elem->prev;
+    } else {
+      root->end = elem->next;
     }
   }
+
+  free(elem);
+
+  root->size--;
 }
 
 /*
@@ -154,11 +165,7 @@ void list_free(node *root){
  * a list (not including root)
  */
 int list_sizeof(node *root){
-  int size = -1;
-  list_foreach(root){
-    size++;
-  }
-  return size;
+  return root->size;
 }
 
 #endif

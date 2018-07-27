@@ -30,18 +30,18 @@ void multihead_setup(){
   for(int i=0;i<screen_resources->ncrtc;i++){
     XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy,screen_resources,screen_resources->crtcs[i]);
 
-    monitor *monitor = malloc(sizeof(monitor));
-    monitor->windows = list_init();
-    monitor->width = crtc_info->width;
-    monitor->height = crtc_info->height;
-    monitor->x = crtc_info->x;
-    monitor->y = crtc_info->y;
-    //monitor->gaps_enabled = true; TODO: Figure out why this causes a crash - gaps cannot be toggled in the meantime
-    monitor->fullscreen_enabled = false;
-    monitor->fullscreen = 0;
+    monitor *mon = malloc(sizeof(monitor));
+    mon->windows = list_init();
+    mon->width = crtc_info->width;
+    mon->height = crtc_info->height;
+    mon->x = crtc_info->x;
+    mon->y = crtc_info->y;
+    mon->gaps_enabled = true;
+    mon->fullscreen_enabled = false;
+    mon->fullscreen = 0;
 
     node *n = list_push(monitors);
-    n->data = monitor;
+    n->data = mon;
     
     XRRFreeCrtcInfo(crtc_info);
   }

@@ -13,6 +13,7 @@ static void spawn(const char *cmd);
 static void select_input(Window win);
 static void kill_focused();
 static void move_resize(Window win, int x, int y, int w, int h);
+static void sighandler(int signo);
 static int on_x_error(Display *d, XErrorEvent *e);
 
 void quit(){
@@ -75,6 +76,10 @@ void move_resize(Window win, int x, int y, int w, int h){
     CWX|CWY|CWWidth|CWHeight,
     &wc
   );
+}
+
+void sighandler(int signo){
+  quit();
 }
 
 int on_x_error(Display *d, XErrorEvent *e){

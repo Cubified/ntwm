@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
@@ -63,6 +64,8 @@ int main(){
 
   select_input(DefaultRootWindow(dpy));
   establish_keybinds(DefaultRootWindow(dpy));
+
+  signal(SIGINT, sighandler);
 
   if(!last_err){
     multihead_setup();
