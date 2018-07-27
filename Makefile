@@ -2,8 +2,8 @@ all: config.h ntwm
 
 CC=gcc
 
-CFLAGS=`pkg-config --cflags x11 xcb xcb-randr`	# Remove xcb and xcb-randr if not using multihead
-LIBS=`pkg-config --libs x11 xcb xcb-randr`	# See above
+CFLAGS=`pkg-config --cflags x11 xrandr`
+LIBS=`pkg-config --libs x11 xrandr`
 
 FLAGS=-O2 -pipe -s
 DEBUGFLAGS=-Og -Wall -pipe -g

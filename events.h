@@ -13,12 +13,13 @@ static void enter_notify(XEvent *e);
 
 void map_request(XEvent *e){
   XMapRequestEvent *ev = &e->xmaprequest;
-
-  list_node *list = find_monitor()->windows;
-
+  
   last_call = "map";
 
-  list_push(list,ev->window);
+  node *list = find_monitor()->windows;
+
+  node *n = list_push(list);
+  n->data_noptr = ev->window;
 
   tile(list);
 
@@ -43,11 +44,13 @@ void unmap_notify(XEvent *e){
 
   last_call = "unmap";
 
-  list_node *list = find_monitor()->windows;
+  node *list = find_monitor()->windows;
 
-  list_pop(list,ev->window);
-
-  tile(list);
+  node *elem = list_find(list,NULL,ev->window);
+  if(elem != NULL){
+    list_pop(list,elem);
+    tile(list);
+  }
 }
 
 void key_press(XEvent *e){
@@ -82,5 +85,20 @@ void enter_notify(XEvent *e){
   last_call = "enter";
 
   XSetInputFocus(dpy,ev->window,RevertToParent,CurrentTime);
+}
+
+void screenchange_notify(XEvent *e){
+  last_call = "screenchange";
+
+  multihead_resize();
+ 
+  monitor *m;
+
+  list_foreach(monitors){
+    m = itr->data;
+    if(m != NULL && m->windows != NULL){
+      tile(m->windows);
+    }
+  }
 }
 #endif

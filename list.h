@@ -1,75 +1,164 @@
 /*
- * list.h: singly-linked list
+ * list.h: linked list implementation
  */
 
 #ifndef __LIST_H
 #define __LIST_H
 
-#include <stdlib.h>
+typedef struct node {
+  void *data;
+  unsigned int data_noptr;
+  struct node *next;
+  struct node *prev;
+  struct node *end;
+} node;
 
-typedef struct list_node {
-  Window window;
-  struct list_node *next;
-} list_node;
+//
 
-#define LIST_NODE_FOREACH(n)        list_node *iterator;for(iterator=n;iterator!=NULL;iterator=iterator->next)
-#define LIST_NODE_FOREACH_NOROOT(n) list_node *iterator;for(iterator=n->next;iterator!=NULL;iterator=iterator->next)
+#define list_foreach(root)        node *itr;for(itr=root;itr!=NULL;itr=itr->next)
+#define list_foreach_noroot(root) node *itr;for(itr=root->next;itr!=NULL;itr=itr->next)
 
-static void list_push(list_node *root, Window win);
-static void list_pop(list_node *root, Window win);
-static void list_free(list_node *n);
-#ifdef MULTIHEAD
-static void list_freeall(list_node *root);
-#endif
-static int list_sizeof(list_node *root);
-static list_node *list_init();
+//
 
-void list_push(list_node *root, Window win){
-  list_node *n = list_init();
-  n->window = win;
-  n->next = root->next;
-  root->next = n;
+static node *node_create();
+
+static node *list_init();
+static node *list_push(node *root);
+static node *list_find(node *root, void *data, unsigned int data_noptr);
+static node *list_get(node *root, int index);
+
+static void list_pop(node *root, node *elem);
+static void list_free(node *root);
+
+static int list_sizeof(node *root);
+
+//
+
+/*
+ * Creates a new node (not to be used
+ * in the majority of cases)
+ */
+node *node_create(){
+  node *elem = malloc(sizeof(node));
+
+  return elem;
 }
 
-void list_pop(list_node *root, Window win){
+/*
+ * Creates (and returns) a new root node
+ */
+node *list_init(){
+  node *root = node_create();
+  root->data = NULL;
+  root->data_noptr = 0;
+  root->next = NULL;
+  root->prev = NULL;
+  root->end = NULL;
+  
+  return root;
+}
+
+/*
+ * Creates (and returns) a new node which
+ * has been inserted after the root node
+ */
+node *list_push(node *root){
+  node *elem = node_create();
+
+  elem->next = NULL;
+  elem->prev = root->end;
+  elem->end = NULL;
+
+  if(root->end != NULL){
+    root->end->next = elem;
+  }
+  root->end = elem;
+
+  if(root->next == NULL){
+    root->next = elem;
+  }
+
+  return elem;
+}
+
+/*
+ * Finds a node based on given data,
+ * returns NULL if not found
+ */
+node *list_find(node *root, void *data, unsigned int data_noptr){
   int found = 0;
-  LIST_NODE_FOREACH(root){
-    if(iterator->next != NULL && iterator->next->window == win){
+
+  list_foreach(root){
+    if((data != NULL &&
+        itr->data == data) ||
+       (data_noptr != 0 &&
+        itr->data_noptr == data_noptr)
+      ){
       found = 1;
       break;
     }
   }
   if(found){
-    list_node *copy = iterator->next->next;
-    list_free(iterator->next);
-    iterator->next = copy;
+    return itr;
+  }
+  return NULL;
+}
+
+/*
+ * Gets a node at a specified position
+ * in the list (root is at index 0)
+ */
+node *list_get(node *root, int index){
+  int cnt = 0;
+  list_foreach(root){
+    if(cnt == index){
+      break;
+    }
+    cnt++;
+  }
+  return itr;
+}
+
+/*
+ * Deletes a node from the list (does
+ * nothing if not found)
+ */
+void list_pop(node *root, node *elem){
+  list_foreach(root){
+    if(itr->next == elem){
+      itr->next = elem->next;
+      if(itr->next != NULL){
+        itr->next->prev = itr;
+      }
+      
+      free(elem);
+
+      break;
+    }
   }
 }
 
-void list_free(list_node *n){
-  free(n);
-}
-
-#ifdef MULTIHEAD
-void list_freeall(list_node *root){
-  LIST_NODE_FOREACH(root){
-    list_node *copy = iterator;
-    free(copy);
+/*
+ * Frees an entire list
+ */
+void list_free(node *root){
+  list_foreach(root){
+    if(itr->prev != NULL){
+      free(itr->prev);
+    }
   }
 }
-#endif
 
-int list_sizeof(list_node *root){
+/*
+ * Returns the number of nodes in
+ * a list (not including root)
+ */
+int list_sizeof(node *root){
   int size = -1;
-  LIST_NODE_FOREACH(root){size++;}
+  list_foreach(root){
+    size++;
+  }
   return size;
-}
-
-list_node *list_init(){
-  list_node *new_node = malloc(sizeof(list_node));
-  new_node->window = (Window)NULL;
-  new_node->next = NULL;
-  return new_node;
 }
 
 #endif

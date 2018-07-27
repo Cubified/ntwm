@@ -5,11 +5,11 @@
 #ifndef __TILING_H
 #define __TILING_H
 
-static void tile(list_node *list);
+static void tile(node *list);
 static void toggle_gaps(monitor *current_monitor);
 static void toggle_fullscreen(monitor *current_monitor, Window win);
 
-void tile(list_node *list){
+void tile(node *list){
   int clients_count, i,
     cols, rows,
     col_height, col_width,
@@ -17,6 +17,7 @@ void tile(list_node *list){
     x, y,
     w, h,
     gaps;
+  Window win;
   monitor *current_monitor;
 
   clients_count = list_sizeof(list);
@@ -45,7 +46,7 @@ void tile(list_node *list){
   row_number = 0;
   i = 0;
 
-  LIST_NODE_FOREACH_NOROOT(list){
+  list_foreach_noroot(list){
     if(i / rows + 1 > cols - clients_count % cols){
       rows = clients_count / cols + 1;
     }
@@ -55,17 +56,19 @@ void tile(list_node *list){
     w = col_width - gaps;
     h = (col_height / rows) - gaps;
 
-    if(current_monitor->fullscreen_enabled && current_monitor->fullscreen == iterator->window){
+    win = itr->data_noptr;
+
+    if(current_monitor->fullscreen_enabled && current_monitor->fullscreen == win){
       x = 0;
       y = 0;
       w = current_monitor->width;
       h = current_monitor->height;
 
-      XRaiseWindow(dpy,iterator->window);
+      XRaiseWindow(dpy,win);
     }
 
     move_resize(
-      iterator->window,
+      win,
       x, y,
       w, h
     );

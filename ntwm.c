@@ -2,31 +2,39 @@
  * ntwm.c: ntwm core
  */
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
 
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
 #include <X11/keysym.h>
+#include <X11/extensions/Xrandr.h>
 
 #include "config.h"
-#include "list.h"
 #include "logging.h"
+#include "list.h"
 
 bool running = true;
 bool has_thrown = false;
 
-const char *last_call = "";
+char *last_call = "";
 
 int last_err = 0;
 int monitor_width;
 int monitor_height;
+int rr_event_base;
+int rr_error_base;
 
 Display *dpy;
 XEvent e;
 Window focused;
 Screen *screen;
+
+node *monitors;
 
 #include "util.h"
 #include "multihead.h"
@@ -56,11 +64,8 @@ int main(){
   select_input(DefaultRootWindow(dpy));
   establish_keybinds(DefaultRootWindow(dpy));
 
-  XSync(dpy,false);
-    
-  multihead_setup();
-    
   if(!last_err){
+    multihead_setup();
     spawn(autostartcmd);
   }
 
@@ -82,12 +87,15 @@ int main(){
       case KeyPress:
         key_press(&e);
         break;
+      default:
+        if(e.type == rr_event_base + RRScreenChangeNotify){
+          screenchange_notify(&e);
+        }
+        break;
     }
   }
 
   info("ntwm shutting down.");
-
-  XCloseDisplay(dpy);
 
   multihead_free();
 

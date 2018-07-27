@@ -2,7 +2,7 @@
  * config.h: ntwm configuration
  */
 
-#define VER "0.5.0"
+#define VER "1.0.0"
 #define GAPS 50
 #define MULTIHEAD /* multimonitor support */
 #define MASK Mod1Mask

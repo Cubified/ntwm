@@ -5,8 +5,6 @@
 #ifndef __LOGGING_H
 #define __LOGGING_H
 
-#include <stdio.h>
-
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -15,31 +13,36 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-static void info(const char *str);
-static void error(const char *str);
-//static void debug(void *data,const char *str);
+static void info(const char *str,...);
+static void error(const char *str,...);
+static void debug(const char *str,...);
 
-void info(const char *str){
-  if(log_colors){
-    printf(ANSI_COLOR_CYAN "=> %s" ANSI_COLOR_RESET "\n",str);
-  } else {
-    printf("=> %s\n",str);
-  }
+void info(const char *str,...){
+  va_list args;
+
+  va_start(args,str);
+  printf(ANSI_COLOR_CYAN "=> ");
+  vfprintf(stdout,str,args);
+  printf(ANSI_COLOR_RESET "\n");
+  va_end(args);
 }
-void error(const char *str){
-  if(log_colors){
-    printf(ANSI_COLOR_RED "==> Error: %s" ANSI_COLOR_RESET "\n",str);
-  } else {
-    printf("==> Error: %s\n",str);
-  }
+void error(const char *str,...){
+  va_list args;
+
+  va_start(args,str);
+  printf(ANSI_COLOR_RED "==> Error: ");
+  vfprintf(stdout,str,args);
+  printf(ANSI_COLOR_RESET "\n");
+  va_end(args);
 }
-/*
-void debug(void *data,const char *str){
-  if(log_colors){
-    printf(ANSI_COLOR_GREEN "=> Debug: " ANSI_COLOR_RESET "%s" ANSI_COLOR_GREEN "=" ANSI_COLOR_RESET "%p\n",str,data);
-  } else {
-    printf("=> Debug: %s=%p\n",str,data);
-  }
-}*/
+void debug(const char *str,...){
+  va_list args;
+
+  va_start(args,str);
+  printf(ANSI_COLOR_GREEN "=> Debug: ");
+  vfprintf(stdout,str,args);
+  printf(ANSI_COLOR_RESET "\n");
+  va_end(args);
+}
 
 #endif

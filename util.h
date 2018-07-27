@@ -54,7 +54,7 @@ void select_input(Window win){
     EnterWindowMask |
     SubstructureRedirectMask |
     SubstructureNotifyMask
-  );  
+  );
 }
 
 void kill_focused(){

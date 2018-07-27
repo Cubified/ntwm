@@ -1,8 +1,8 @@
-# ntwm v0.5.0
+# ntwm v1.0.0
 
 A tiny, frameless, grid-tiling window manager with multimonitor support.
 
-ntwm was written from scratch using Xlib (although a major TODO is to convert to xcb) and was inspired by dwm, frankenwm, and other minimal tiling window managers.
+ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and other minimal tiling window managers.
 
 ## Screenshot
 
@@ -10,9 +10,8 @@ ntwm was written from scratch using Xlib (although a major TODO is to convert to
 
 ## Size Comparison
 
-| ntwm (no multimonitor support) | 10kb  |
+| ntwm                           | 15kb  |
 |--------------------------------|-------|
-| ntwm (multimonitor support)    | 15kb  |
 | dwm                            | 33kb  |
 | 2bwm                           | 36kb  |
 | i3                             | 343kb |
@@ -25,7 +24,7 @@ TODO, although not particularly important
 
 ### Prerequisites:
 
-    libX11, libxcb
+    libX11, libXrandr
     gcc, make, pkg-config
 
 gcc is not necessarily required (tcc or clang can take its place)
@@ -50,9 +49,19 @@ gcc is not necessarily required (tcc or clang can take its place)
 
 All configuration is done through `config.h`, and provided options should be relatively self-explanatory.
 
+## What's New in the v1.0.0 Release
+
+- Massively improve stability, especially on multimonitor systems
+- Fix invalid pointer error on exit
+- Consolidate (and refactor) linked list implementations
+- Improve logging utilities
+- Add support for changing the Xrandr configuration on-the-fly (screenchange events)
+- Remove xcb dependency, replace with a pure-Xlib/Xrandr solution
+- Fix xephyr testing/debugging environments
+
 ## To-Do
 
-* Workspace support
-* Convert to xcb
-  * Note:  `multihead.h` already uses xcb
-* Add general polish
+- Allow for gaps to be toggled (/figure out cause of odd crash on monitor creation)
+- Bar support
+- Borders (?)
+  - Would require reparenting (and therefore major refactoring)
