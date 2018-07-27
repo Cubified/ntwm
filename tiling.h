@@ -59,8 +59,8 @@ void tile(node *list){
     win = itr->data_noptr;
 
     if(current_monitor->fullscreen_enabled && current_monitor->fullscreen == win){
-      x = 0;
-      y = 0;
+      x = current_monitor->x;
+      y = current_monitor->y;
       w = current_monitor->width;
       h = current_monitor->height;
 

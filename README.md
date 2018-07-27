@@ -8,6 +8,8 @@ ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and othe
 
 ![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
 
+---
+
 ## Size Comparison
 
 | ntwm | 15kb  |
@@ -15,6 +17,8 @@ ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and othe
 | dwm  | 33kb  |
 | 2bwm | 36kb  |
 | i3   | 343kb |
+
+---
 
 ## Compiling, Running, and Debugging
 
@@ -45,13 +49,15 @@ gcc is not necessarily required (tcc or clang can take its place)
 
 ---
 
-### To Install
+### To Install:
 
     $ sudo make install
 
-### To Uninstall
+### To Uninstall:
 
     $ sudo make uninstall
+
+---
 
 ## Configuration
 
@@ -60,6 +66,8 @@ All configuration is done through `config.h`, and provided options should be rel
 ### Autostart
 
 ntwm supports running any shell command or script at startup through the `autostartcmd` variable in `config.h`.
+
+---
 
 ## Changelog
 
@@ -80,6 +88,8 @@ ntwm supports running any shell command or script at startup through the `autost
 - Add support for changing the Xrandr configuration on-the-fly (screenchange events)
 - Remove xcb dependency, replace with a pure-Xlib/Xrandr solution
 - Fix xephyr testing/debugging environments
+
+---
 
 ## To-Do
 
