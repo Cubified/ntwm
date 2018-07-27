@@ -7,6 +7,11 @@
 
 #define LENGTH(x) (sizeof(x)/sizeof(x[0])) // Borrowed from dwm
 
+enum {
+  atom_protocols,
+  atom_delete
+};
+
 static void quit();
 static void establish_keybinds(Window win);
 static void spawn(const char *cmd);
@@ -14,6 +19,8 @@ static void select_input(Window win);
 static void kill_focused();
 static void move_resize(Window win, int x, int y, int w, int h);
 static void sighandler(int signo);
+static void setup_atoms();
+static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
 
 void quit(){
@@ -60,6 +67,16 @@ void select_input(Window win){
 
 void kill_focused(){
   XUnmapWindow(dpy,focused);
+
+  int success = send_event(focused,atoms[atom_delete]);
+
+  if(!success){
+    XGrabServer(dpy);
+    XSetCloseDownMode(dpy,DestroyAll);
+    XKillClient(dpy,focused);
+    XSync(dpy,false);
+    XUngrabServer(dpy);
+  }
 }
 
 void move_resize(Window win, int x, int y, int w, int h){
@@ -80,6 +97,40 @@ void move_resize(Window win, int x, int y, int w, int h){
 
 void sighandler(int signo){
   quit();
+}
+
+void setup_atoms(){
+  atoms[atom_protocols] = XInternAtom(dpy,"WM_PROTOCOLS",false);
+  atoms[atom_delete] = XInternAtom(dpy,"WM_DELETE_WINDOW",false);
+}
+
+int send_event(Window win, Atom atom){
+  int protocols_count;
+  Atom *protocols;
+  XEvent evt;
+
+  int exists = 0;
+
+  XGetWMProtocols(dpy,win,&protocols,&protocols_count);
+
+  while(!exists){
+    exists = (protocols[protocols_count] == atom);
+    protocols_count--;
+  }
+
+  XFree(protocols);
+
+  if(exists){
+    evt.type = ClientMessage;
+    evt.xclient.window = win;
+    evt.xclient.message_type = atoms[atom_protocols];
+    evt.xclient.format = 32;
+    evt.xclient.data.l[0] = atom;
+    evt.xclient.data.l[1] = CurrentTime;
+    XSendEvent(dpy,win,false,NoEventMask,&evt);
+  }
+
+  return exists;
 }
 
 int on_x_error(Display *d, XErrorEvent *e){

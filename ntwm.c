@@ -13,6 +13,7 @@
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
 #include <X11/keysym.h>
+#include <X11/Xatom.h>
 #include <X11/extensions/Xrandr.h>
 
 #include "config.h"
@@ -34,6 +35,7 @@ Display *dpy;
 XEvent e;
 Window focused;
 Screen *screen;
+Atom atoms[2];
 
 node *monitors;
 
@@ -64,6 +66,8 @@ int main(){
 
   select_input(DefaultRootWindow(dpy));
   establish_keybinds(DefaultRootWindow(dpy));
+
+  setup_atoms();
 
   signal(SIGINT, sighandler);
 

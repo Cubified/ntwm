@@ -75,6 +75,7 @@ ntwm supports running any shell command or script at startup through the `autost
 
 - Fix toggleable gaps and fullscreen
 - Rewrite linked list functions, removing unnecessary loops and fixing infinite loop after opening and closing windows rapidly
+- Add support for Xlib atoms, meaning windows closed with Alt+Shift+Q are killed rather than simply unmapped
 - Add signal trapping
 - Add install and uninstall targets in Makefile
 - Remove tmux from debug environment
@@ -93,8 +94,8 @@ ntwm supports running any shell command or script at startup through the `autost
 
 ## To-Do
 
-- Kill X clients on Alt+Shift+Q (rather than only unmapping them)
 - Set cursor
+- Improved/extended atom support
 - Bar support
   - Current workaround (for polybar): `override-redirect = true` in bar config
 - Borders (?)
