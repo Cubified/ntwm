@@ -12,6 +12,7 @@ enum {
   atom_delete
 };
 
+static void init();
 static void quit();
 static void establish_keybinds(Window win);
 static void spawn(const char *cmd);
@@ -20,8 +21,30 @@ static void kill_focused();
 static void move_resize(Window win, int x, int y, int w, int h);
 static void sighandler(int signo);
 static void setup_atoms();
+static void set_cursor(unsigned int cursor_name);
 static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
+
+void init(){
+  dpy = XOpenDisplay(0x0);
+  if(dpy == NULL){
+    error("Failed to open display.");
+    quit();
+  }
+
+  root = DefaultRootWindow(dpy);
+
+  XSetErrorHandler(&on_x_error);
+
+  select_input(root);
+  establish_keybinds(root);
+
+  setup_atoms();
+  
+  set_cursor(XC_arrow);
+
+  signal(SIGINT, sighandler);
+}
 
 void quit(){
   running = false;
@@ -102,6 +125,11 @@ void sighandler(int signo){
 void setup_atoms(){
   atoms[atom_protocols] = XInternAtom(dpy,"WM_PROTOCOLS",false);
   atoms[atom_delete] = XInternAtom(dpy,"WM_DELETE_WINDOW",false);
+}
+
+void set_cursor(unsigned int cursor_name){
+  Cursor cursor = XCreateFontCursor(dpy, cursor_name);
+  XDefineCursor(dpy,root,cursor);
 }
 
 int send_event(Window win, Atom atom){

@@ -14,6 +14,7 @@
 #include <X11/XKBlib.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
+#include <X11/cursorfont.h>
 #include <X11/extensions/Xrandr.h>
 
 #include "config.h"
@@ -34,7 +35,7 @@ int rr_error_base;
 Display *dpy;
 XEvent e;
 Window focused;
-Screen *screen;
+Window root;
 Atom atoms[2];
 
 node *monitors;
@@ -47,34 +48,10 @@ node *monitors;
 int main(){
   info("ntwm v" VER " starting up.");
 
-  dpy = XOpenDisplay(0x0);
+  init();
 
-  if(dpy == NULL){
-    error("Failed to open display.");
-    quit();
-    return 1;
-  }
-
-  screen = XDefaultScreenOfDisplay(dpy);
-  if(screen == NULL){
-    error("Failed to detect default screen.");
-    quit();
-    return 1;
-  }
-
-  XSetErrorHandler(&on_x_error);
-
-  select_input(DefaultRootWindow(dpy));
-  establish_keybinds(DefaultRootWindow(dpy));
-
-  setup_atoms();
-
-  signal(SIGINT, sighandler);
-
-  if(!last_err){
-    multihead_setup();
-    spawn(autostartcmd);
-  }
+  multihead_setup();
+  spawn(autostartcmd);
 
   while(running){
     XNextEvent(dpy, &e);

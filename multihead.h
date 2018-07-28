@@ -26,7 +26,7 @@ static monitor *find_monitor();
 void multihead_setup(){
   monitors = list_init();
  
-  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,DefaultRootWindow(dpy));
+  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
   for(int i=0;i<screen_resources->ncrtc;i++){
     XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy,screen_resources,screen_resources->crtcs[i]);
 
@@ -52,7 +52,7 @@ void multihead_setup(){
   
   XRRSelectInput(
     dpy,
-    DefaultRootWindow(dpy),
+    root,
     RRScreenChangeNotifyMask
   );
 }
@@ -69,7 +69,7 @@ void multihead_free(){
 }
 
 void multihead_resize(){
-  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,DefaultRootWindow(dpy));
+  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
   XRRCrtcInfo *crtc_info;
   monitor *m;
   int i = 0;
@@ -91,7 +91,7 @@ monitor *find_monitor(){
   unsigned int mask_return;
   XQueryPointer(
     dpy,
-    DefaultRootWindow(dpy),
+    root,
     &win,
     &win,
     &pos_x,
