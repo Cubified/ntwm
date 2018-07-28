@@ -50,8 +50,10 @@ int main(){
 
   init();
 
-  multihead_setup();
-  spawn(autostartcmd);
+  if(!last_err){
+    multihead_setup();
+    spawn(autostartcmd);
+  }
 
   while(running){
     XNextEvent(dpy, &e);

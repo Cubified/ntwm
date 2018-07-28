@@ -5,11 +5,19 @@
 #ifndef __TILING_H
 #define __TILING_H
 
-static void tile(node *list);
+static void tile();
+static void tile_monitor(monitor *m);
 static void toggle_gaps(monitor *current_monitor);
 static void toggle_fullscreen(monitor *current_monitor, Window win);
 
-void tile(node *list){
+void tile(){
+  list_foreach_noroot(monitors){
+    monitor *m = itr->data;
+    tile_monitor(m);
+  }
+}
+
+void tile_monitor(monitor *m){
   int clients_count, i,
     cols, rows,
     col_height, col_width,
@@ -18,7 +26,7 @@ void tile(node *list){
     w, h,
     gaps;
   Window win;
-  monitor *current_monitor;
+  node *list = m->windows;
 
   clients_count = list_sizeof(list);
   if(clients_count == 0){
@@ -32,16 +40,11 @@ void tile(node *list){
   }
 
   rows = clients_count / cols;
-  current_monitor = find_monitor();
 
-  if(current_monitor == NULL){
-    error("Could not locate monitor.");
-  }
+  gaps = (m->gaps_enabled ? GAPS : 0);
 
-  gaps = (current_monitor->gaps_enabled ? GAPS : 0);
-
-  col_height = current_monitor->height - gaps;
-  col_width = (current_monitor->width - gaps) / (cols ? cols : 1);
+  col_height = m->height - gaps;
+  col_width = (m->width - gaps) / (cols ? cols : 1);
   col_number = 0;
   row_number = 0;
   i = 0;
@@ -51,18 +54,18 @@ void tile(node *list){
       rows = clients_count / cols + 1;
     }
 
-    x = (col_number * col_width) + gaps + current_monitor->x;
-    y = row_number * col_height / rows + gaps + current_monitor->y;
+    x = (col_number * col_width) + gaps + m->x;
+    y = row_number * col_height / rows + gaps + m->y;
     w = col_width - gaps;
     h = (col_height / rows) - gaps;
 
     win = itr->data_noptr;
 
-    if(current_monitor->fullscreen_enabled && current_monitor->fullscreen == win){
-      x = current_monitor->x;
-      y = current_monitor->y;
-      w = current_monitor->width;
-      h = current_monitor->height;
+    if(m->fullscreen_enabled && m->fullscreen == win){
+      x = m->x;
+      y = m->y;
+      w = m->width;
+      h = m->height;
 
       XRaiseWindow(dpy,win);
     }

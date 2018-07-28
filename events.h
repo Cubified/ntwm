@@ -21,7 +21,7 @@ void map_request(XEvent *e){
   node *n = list_push(list);
   n->data_noptr = ev->window;
 
-  tile(list);
+  tile();
 
   select_input(ev->window);
   establish_keybinds(ev->window);
@@ -49,7 +49,7 @@ void unmap_notify(XEvent *e){
   node *elem = list_find(list,NULL,ev->window);
   if(elem != NULL){
     list_pop(list,elem);
-    tile(list);
+    tile();
   }
 }
 

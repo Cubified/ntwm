@@ -166,16 +166,11 @@ int on_x_error(Display *d, XErrorEvent *e){
     if(!has_thrown){
       error("Another window manager is already running.");
       has_thrown = true;
+      quit();
     }
   } else {
-    if(log_colors){
-      printf(ANSI_COLOR_RED "==> Error: %i" ANSI_COLOR_RESET "\n", e->error_code);
-    } else {
-      printf("==> Error: %i\n", e->error_code);
-    }
-    error(last_call);
+    error("%s (error code %i)",last_call,e->error_code);
   }
-  quit();
   last_err = e->error_code;
   return 0;
 }
