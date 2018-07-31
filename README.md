@@ -73,10 +73,12 @@ ntwm supports running any shell command or script at startup through the `autost
 
 ### v1.0.1
 
+- Allow for windows to be moved from monitor to monitor (cursor follows)
 - Fix toggleable gaps and fullscreen
 - Rewrite linked list functions, removing unnecessary loops and fixing infinite loop after opening and closing windows rapidly
 - Add support for Xlib atoms, meaning windows closed with Alt+Shift+Q are killed rather than simply unmapped
 - Set cursor
+- Add grid tiling mode (cannot be switched on-the-fly, see TODOs)
 - Add signal trapping
 - Add install and uninstall targets in Makefile
 - Remove tmux from debug environment
@@ -96,7 +98,12 @@ ntwm supports running any shell command or script at startup through the `autost
 
 ## To-Do
 
-- Improved/extended atom support
+- Per-monitor focused windows (i.e. turning ntwm into a fully keyboard-driven wm)
+- Allow for switching between tiling functions with keybind
+  - Tiling mode can be changed (temporarily) using the `TILING_MODE` directive in `config.h`
+
+More long-term, complex, or nonessential plans include:
+
 - Bar support
   - Current workaround (for polybar): `override-redirect = true` in bar config
 - Borders (?)

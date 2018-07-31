@@ -30,19 +30,21 @@ void multihead_setup(){
   for(int i=0;i<screen_resources->ncrtc;i++){
     XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy,screen_resources,screen_resources->crtcs[i]);
 
-    monitor *mon = malloc(sizeof(monitor));
-    mon->windows = list_init();
-    mon->width = crtc_info->width;
-    mon->height = crtc_info->height;
-    mon->x = crtc_info->x;
-    mon->y = crtc_info->y;
-    mon->gaps_enabled = true;
-    mon->fullscreen_enabled = false;
-    mon->fullscreen = 0;
+    if(crtc_info->width > 0){
+      monitor *mon = malloc(sizeof(monitor));
+      mon->windows = list_init();
+      mon->width = crtc_info->width;
+      mon->height = crtc_info->height;
+      mon->x = crtc_info->x;
+      mon->y = crtc_info->y;
+      mon->gaps_enabled = true;
+      mon->fullscreen_enabled = false;
+      mon->fullscreen = 0;
 
-    node *n = list_push(monitors);
-    n->data = mon;
-    
+      node *n = list_push(monitors);
+      n->data = mon;
+    }
+
     XRRFreeCrtcInfo(crtc_info);
   }
   XSync(dpy,false);

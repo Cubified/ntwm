@@ -33,6 +33,7 @@ int rr_event_base;
 int rr_error_base;
 
 Display *dpy;
+Screen *screen;
 XEvent e;
 Window focused;
 Window root;
@@ -54,7 +55,7 @@ int main(){
     multihead_setup();
     spawn(autostartcmd);
   }
-
+  
   while(running){
     XNextEvent(dpy, &e);
     switch(e.type){

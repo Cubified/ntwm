@@ -51,6 +51,10 @@ void unmap_notify(XEvent *e){
     list_pop(list,elem);
     tile();
   }
+
+  if(focused == ev->window){
+    focused = 0;
+  }
 }
 
 void key_press(XEvent *e){
@@ -74,6 +78,12 @@ void key_press(XEvent *e){
         toggle_gaps(current_monitor);
       } else if(strcmp(keys[i].func,"full") == 0){
         toggle_fullscreen(current_monitor,focused);
+      } else if(strcmp(keys[i].func,"next") == 0){
+        cycle_monitors(focused,1);
+      } else if(strcmp(keys[i].func,"prev") == 0){
+        cycle_monitors(focused,0);
+      } else if(strcmp(keys[i].func,"mode") == 0){
+        next_mode();
       }
     }
   }

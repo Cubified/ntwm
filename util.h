@@ -24,6 +24,9 @@ static void setup_atoms();
 static void set_cursor(unsigned int cursor_name);
 static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
+static int round_float(float n);
+static int closest_even(int n);
+static int valid_window(Window win);
 
 void init(){
   dpy = XOpenDisplay(0x0);
@@ -33,6 +36,8 @@ void init(){
   }
 
   root = DefaultRootWindow(dpy);
+  screen = DefaultScreenOfDisplay(dpy);
+  focused = 0;
 
   XSetErrorHandler(&on_x_error);
 
@@ -89,16 +94,18 @@ void select_input(Window win){
 }
 
 void kill_focused(){
-  XUnmapWindow(dpy,focused);
+  if(valid_window(focused)){
+    XUnmapWindow(dpy,focused);
 
-  int success = send_event(focused,atoms[atom_delete]);
+    int success = send_event(focused,atoms[atom_delete]);
 
-  if(!success){
-    XGrabServer(dpy);
-    XSetCloseDownMode(dpy,DestroyAll);
-    XKillClient(dpy,focused);
-    XSync(dpy,false);
-    XUngrabServer(dpy);
+    if(!success){
+      XGrabServer(dpy);
+      XSetCloseDownMode(dpy,DestroyAll);
+      XKillClient(dpy,focused);
+      XSync(dpy,false);
+      XUngrabServer(dpy);
+    }
   }
 }
 
@@ -173,6 +180,18 @@ int on_x_error(Display *d, XErrorEvent *e){
   }
   last_err = e->error_code;
   return 0;
+}
+
+int round_float(float n){
+  return (int)(n < 0 ? n - 0.5 : n + 0.5);
+}
+
+int closest_even(int n){
+  return (n % 2 == 0 ? n : n - 1);
+}
+
+int valid_window(Window win){
+  return (focused != 0 && focused != root);
 }
 
 #endif
