@@ -118,7 +118,7 @@ void tile_stack(monitor *m){
   float subcol_height_left_exact =
     (len > 2 ?                            // Return zero if the left column does not need to exist
      (float)m->height /                   // Otherwise, window height is monitor height divided by
-      ((float)closest_even(len) - 2.0) /  //   the number of windows in the left column, see above
+      (((float)closest_even(len) - 2.0) / //   the number of windows in the left column, see above
         2.0) :                            // A note: every even number of windows corresponds to a
       0.0                                 //   new window in the right column, whereas every odd #
     );                                    //   of windows (apart from 1) corresponds to a new left
