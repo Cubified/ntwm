@@ -17,9 +17,9 @@
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xrandr.h>
 
-#include "config.h"
 #include "logging.h"
 #include "list.h"
+#include "config.h"
 
 bool running = true;
 bool has_thrown = false;
@@ -27,6 +27,7 @@ bool has_thrown = false;
 char *last_call = "";
 
 int last_err = 0;
+int mode_index = 0;
 int monitor_width;
 int monitor_height;
 int rr_event_base;
@@ -43,6 +44,9 @@ node *monitors;
 
 #include "util.h"
 #include "multihead.h"
+
+#include "modes.h"
+
 #include "tiling.h"
 #include "events.h"
 

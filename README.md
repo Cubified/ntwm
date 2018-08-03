@@ -107,7 +107,7 @@ If your greeter has no option to change the default X session (i.e. _not_ the GT
 | Mod+Shift+F     | Toggle fullscreen               |
 | Mod+Shift+Right | Move window to next monitor     |
 | Mod+Shift+Left  | Move window to previous monitor |
-| Mod+O (TODO)    | Next tiling mode                |
+| Mod+O           | Next tiling mode                |
 
 ---
 
@@ -119,18 +119,29 @@ All configuration is done through `config.h`, and provided options should be rel
 
 ntwm supports running any shell command or script at startup through the `autostartcmd` variable in `config.h`.
 
+### Tiling Modes
+
+By default, ntwm supports three tiling modes (with more coming):
+
+- Grid
+- Dualstack
+- Fibonacci
+
+To edit the order in which these modes are selected, adjust the `modes` variable in `config.h`.
+
 ---
 
 ## Changelog
 
 ### v1.0.1
 
+- Add support for switching tiling modes on-the-fly
 - Allow for windows to be moved from monitor to monitor (cursor follows)
 - Fix toggleable gaps and fullscreen
 - Rewrite linked list functions, removing unnecessary loops and fixing infinite loop after opening and closing windows rapidly
 - Add support for Xlib atoms, meaning windows closed with Alt+Shift+Q are killed rather than simply unmapped
 - Set cursor
-- Add grid tiling mode (cannot be switched on-the-fly, see TODOs)
+- Add dualstack and fibonacci tiling modes
 - Add signal trapping
 - Add install and uninstall targets in Makefile
 - Remove tmux from debug environment
@@ -150,9 +161,8 @@ ntwm supports running any shell command or script at startup through the `autost
 
 ## To-Do
 
+- More tiling modes
 - Per-monitor focused windows (i.e. turning ntwm into a fully keyboard-driven wm)
-- Allow for switching between tiling functions with keybind
-  - Tiling mode can be changed (temporarily) using the `TILING_MODE` directive in `config.h`
 
 More long-term, complex, or nonessential plans include:
 

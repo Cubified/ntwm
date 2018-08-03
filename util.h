@@ -26,8 +26,14 @@ static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
 static int round_float(float n);
 static int closest_even(int n);
+static int closest_odd(int n);
 static int valid_window(Window win);
 
+/*
+ * Initialize the connection
+ * to the X server, among a
+ * few other variables
+ */
 void init(){
   dpy = XOpenDisplay(0x0);
   if(dpy == NULL){
@@ -51,10 +57,23 @@ void init(){
   signal(SIGINT, sighandler);
 }
 
+/*
+ * Quit ntwm (Note: requires
+ * a new X event to terminate
+ * the event loop, fairly
+ * unimportant because this
+ * function is only called
+ * on SIGINT
+ */
 void quit(){
   running = false;
 }
 
+/*
+ * Forks a child process,
+ * used with the "spawn"
+ * command in config.h
+ */
 void spawn(const char *cmd){
   pid_t process = fork();
 
@@ -69,6 +88,11 @@ void spawn(const char *cmd){
   }
 }
 
+/*
+ * Grab input events from a window,
+ * used on map events as well as
+ * init()
+ */
 void establish_keybinds(Window win){
   for(int i=0;i<LENGTH(keys);i++){
     XGrabKey(
@@ -83,6 +107,11 @@ void establish_keybinds(Window win){
   }
 }
 
+/*
+ * Grab desired events from a window,
+ * used in conjunction with
+ * establish_keybinds()
+ */
 void select_input(Window win){
   XSelectInput(
     dpy,
@@ -93,6 +122,11 @@ void select_input(Window win){
   );
 }
 
+/*
+ * Kills the focused window,
+ * used with a keybind in
+ * config.h
+ */
 void kill_focused(){
   if(valid_window(focused)){
     XUnmapWindow(dpy,focused);
@@ -109,6 +143,10 @@ void kill_focused(){
   }
 }
 
+/*
+ * Extremely complex functionality:
+ * Moves and resizes a window
+ */
 void move_resize(Window win, int x, int y, int w, int h){
   XWindowChanges wc;
 
@@ -125,20 +163,39 @@ void move_resize(Window win, int x, int y, int w, int h){
   );
 }
 
+/*
+ * Quits ntwm on SIGINT
+ */
 void sighandler(int signo){
   quit();
 }
 
+/*
+ * Sets up atoms for later use
+ * with kill_focused()
+ */
 void setup_atoms(){
   atoms[atom_protocols] = XInternAtom(dpy,"WM_PROTOCOLS",false);
   atoms[atom_delete] = XInternAtom(dpy,"WM_DELETE_WINDOW",false);
 }
 
+/*
+ * Creates (and sets) the cursor,
+ * used in init() to ensure the
+ * default arrow cursor is
+ * visible
+ */
 void set_cursor(unsigned int cursor_name){
   Cursor cursor = XCreateFontCursor(dpy, cursor_name);
   XDefineCursor(dpy,root,cursor);
 }
 
+/*
+ * Sends an event to a
+ * window using an
+ * atom, used with
+ * kill_focused()
+ */
 int send_event(Window win, Atom atom){
   int protocols_count;
   Atom *protocols;
@@ -168,6 +225,11 @@ int send_event(Window win, Atom atom){
   return exists;
 }
 
+/*
+ * X server error handler
+ * (Note: does not quit
+ * on non-fatal error)
+ */
 int on_x_error(Display *d, XErrorEvent *e){
   if(e->error_code == 10){
     if(!has_thrown){
@@ -182,14 +244,37 @@ int on_x_error(Display *d, XErrorEvent *e){
   return 0;
 }
 
+/*
+ * Rounds a float to
+ * the nearest int
+ */
 int round_float(float n){
   return (int)(n < 0 ? n - 0.5 : n + 0.5);
 }
 
+/*
+ * Finds the closest
+ * even number to
+ * an integer n
+ */
 int closest_even(int n){
   return (n % 2 == 0 ? n : n - 1);
 }
 
+/*
+ * Finds the closest
+ * odd number to
+ * an integer n
+ */
+int closest_odd(int n){
+  return (n % 2 ? n : n - 1);
+}
+
+/*
+ * Checks if the focused window
+ * has not been destroyed and
+ * is not the root window
+ */
 int valid_window(Window win){
   return (focused != 0 && focused != root);
 }

@@ -11,6 +11,10 @@ static void unmap_notify(XEvent *e);
 static void key_press(XEvent *e);
 static void enter_notify(XEvent *e);
 
+/*
+ * Adds a new window to the focused
+ * monitor and updates the tiling
+ */
 void map_request(XEvent *e){
   XMapRequestEvent *ev = &e->xmaprequest;
   
@@ -29,6 +33,10 @@ void map_request(XEvent *e){
   XMapWindow(dpy,ev->window);
 }
 
+/*
+ * Updates a window's configuration
+ * (extremely complex description)
+ */
 void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
   last_call = "configure";
@@ -39,6 +47,11 @@ void configure_request(XEvent *e){
   );
 }
 
+/*
+ * Removes a window from the list
+ * of its monitor, updates its
+ * tiling
+ */
 void unmap_notify(XEvent *e){
   XUnmapEvent *ev = &e->xunmap;
 
@@ -57,6 +70,10 @@ void unmap_notify(XEvent *e){
   }
 }
 
+/*
+ * Handles keypresses using keybinds
+ * defined in config.h
+ */
 void key_press(XEvent *e){
   XKeyEvent *ev = &e->xkey;
   KeySym keysym = XkbKeycodeToKeysym(dpy, ev->keycode, 0, 0);
@@ -89,6 +106,12 @@ void key_press(XEvent *e){
   }
 }
 
+/*
+ * Changes the focused window
+ * based on the mouse
+ * entering a new
+ * window
+ */
 void enter_notify(XEvent *e){
   XCrossingEvent *ev = &e->xcrossing;
   focused = ev->window;
@@ -97,6 +120,11 @@ void enter_notify(XEvent *e){
   XSetInputFocus(dpy,ev->window,RevertToParent,CurrentTime);
 }
 
+/*
+ * Handles Xrandr screenchange event,
+ * updating monitor configuration
+ * and window tiling
+ */
 void screenchange_notify(XEvent *e){
   last_call = "screenchange";
 
@@ -107,7 +135,7 @@ void screenchange_notify(XEvent *e){
   list_foreach(monitors){
     m = itr->data;
     if(m != NULL && m->windows != NULL){
-      tile(m->windows);
+      tile();
     }
   }
 }

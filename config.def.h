@@ -6,7 +6,6 @@
 #define GAPS 50
 #define GRID_RATIO 0.3
 #define MULTIHEAD /* multimonitor support */
-#define TILING_MODE tile_grid
 #define MASK Mod1Mask
 #define SHIFT ShiftMask
 
@@ -31,4 +30,16 @@ const key keys[] = {
   {MASK|SHIFT,  XK_Right,   "next",   NULL},
   {MASK|SHIFT,  XK_Left,    "prev",   NULL},
   {MASK,        XK_o,       "mode",   NULL}
+};
+
+typedef void (*func)();
+
+static void tile_grid();
+static void tile_dualstack();
+static void tile_fibonacci();
+
+const func modes[] = {
+  tile_grid,
+  tile_dualstack,
+  tile_fibonacci
 };

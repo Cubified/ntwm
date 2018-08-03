@@ -23,6 +23,10 @@ static monitor *find_monitor();
 
 #ifdef MULTIHEAD
 
+/*
+ * Creates a linked list of monitors
+ * using Xrandr configuration
+ */
 void multihead_setup(){
   monitors = list_init();
  
@@ -59,6 +63,12 @@ void multihead_setup(){
   );
 }
 
+/*
+ * Frees the linked list of monitors,
+ * as well as each of the window
+ * linked lists inside the
+ * monitor struct
+ */
 void multihead_free(){
   list_foreach(monitors){
     monitor *m = (monitor*)itr->data;
@@ -70,6 +80,11 @@ void multihead_free(){
   list_free(monitors);
 }
 
+/*
+ * Updates monitor linked list
+ * in the same manner as
+ * multihead_setup()
+ */
 void multihead_resize(){
   XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
   XRRCrtcInfo *crtc_info;
@@ -86,6 +101,10 @@ void multihead_resize(){
   }
 }
 
+/*
+ * Finds the currently focused monitor
+ * based on the cursor's position
+ */
 monitor *find_monitor(){
   Window win;
   int pos_x, pos_y,
@@ -129,6 +148,12 @@ monitor *find_monitor(){
 
 #ifndef MULTIHEAD
 
+/*
+ * Because multihead is not enabled,
+ * simply creates a single node/
+ * monitor that is the size of
+ * the display in X
+ */
 void multihead_setup(){
   monitors = list_init();
   monitor *monitor = malloc(sizeof(monitor));
@@ -146,6 +171,10 @@ void multihead_setup(){
   n->data = monitor;
 }
 
+/*
+ * Frees this single node, as well as
+ * the windows it holds
+ */
 void multihead_free(){
   list_foreach_noroot(monitors){
     monitor *m = (monitor*)itr->data;
@@ -156,6 +185,12 @@ void multihead_free(){
   list_free(monitors);
 }
 
+/*
+ * Should never be called,
+ * but updates monitor
+ * size without using
+ * Xrandr
+ */
 void multihead_resize(){
   monitor *m;
   list_foreach_noroot(monitors){
@@ -165,6 +200,10 @@ void multihead_resize(){
   }
 }
 
+/*
+ * Returns the one (and only)
+ * monitor
+ */
 monitor *find_monitor(){
   return list_get(monitors,1)->data;
 }
