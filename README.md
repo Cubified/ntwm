@@ -1,6 +1,6 @@
-# ntwm v1.0.1
+# ntwm v1.1.0
 
-A tiny, frameless, grid-tiling window manager with multimonitor support.
+A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
 
 ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and other minimal window managers.
 
@@ -126,12 +126,20 @@ By default, ntwm supports three tiling modes (with more coming):
 - Grid
 - Dualstack
 - Fibonacci
+- Bottomstack
 
 To edit the order in which these modes are selected, adjust the `modes` variable in `config.h`.
 
 ---
 
 ## Changelog
+
+### v1.1.0
+
+- Add "nwin" and "pwin" commands in config.h (for cycling through windows)
+- Add bottomstack tiling mode
+- Add comments
+- Move from -Os to -O3 optimization (makes very little difference)
 
 ### v1.0.1
 
@@ -162,7 +170,6 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 ## To-Do
 
 - More tiling modes
-- Per-monitor focused windows (i.e. turning ntwm into a fully keyboard-driven wm)
 
 More long-term, complex, or nonessential plans include:
 

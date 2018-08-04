@@ -31,6 +31,8 @@ void map_request(XEvent *e){
   establish_keybinds(ev->window);
 
   XMapWindow(dpy,ev->window);
+  
+  set_focused(ev->window);
 }
 
 /*
@@ -59,14 +61,18 @@ void unmap_notify(XEvent *e){
 
   node *list = find_monitor()->windows;
 
+  if(focused == ev->window){
+    if(list->size > 1){
+      cycle_windows(list,focused,0);
+    } else {
+      focused = 0;
+    }
+  }
+
   node *elem = list_find(list,NULL,ev->window);
   if(elem != NULL){
     list_pop(list,elem);
     tile();
-  }
-
-  if(focused == ev->window){
-    focused = 0;
   }
 }
 
@@ -101,6 +107,12 @@ void key_press(XEvent *e){
         cycle_monitors(focused,0);
       } else if(strcmp(keys[i].func,"mode") == 0){
         next_mode();
+      } else if(strcmp(keys[i].func,"nwin") == 0){
+        cycle_windows(current_monitor->windows,focused,1);
+      } else if(strcmp(keys[i].func,"pwin") == 0){
+        cycle_windows(current_monitor->windows,focused,0);
+      } else {
+        error("Unrecognized command \"%s\" in config.",keys[i].func);
       }
     }
   }
@@ -114,10 +126,9 @@ void key_press(XEvent *e){
  */
 void enter_notify(XEvent *e){
   XCrossingEvent *ev = &e->xcrossing;
-  focused = ev->window;
   last_call = "enter";
 
-  XSetInputFocus(dpy,ev->window,RevertToParent,CurrentTime);
+  set_focused(ev->window);
 }
 
 /*

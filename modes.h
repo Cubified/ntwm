@@ -97,7 +97,7 @@ void tile_dualstack(monitor *m){
   int gaps = (m->gaps_enabled ? GAPS : 0);
   int cols = (len >= 3 ? 3 : len);
 
-  float subcol_width_exact = m->width * GRID_RATIO;
+  float subcol_width_exact = m->width * STACK_RATIO;
   int subcol_width = round_float(subcol_width_exact);
 
   int win_right = closest_even(len) / 2;
@@ -155,16 +155,16 @@ void tile_dualstack(monitor *m){
         break;
       case 1: // Right column
         x = m->x + (m->width - subcol_width);
-        y = m->y + (subcol_height_right * (current_row_right)) + gaps;
+        y = m->y + (subcol_height_right * (current_row_right)) + (current_row_right > 0 ? 0 : gaps);
         width = subcol_width - gaps;
-        height = subcol_height_right - (gaps * 2);
+        height = subcol_height_right - (current_row_right > 0 ? gaps : gaps * 2);
         current_row_right++;
         break;
       case 2: // Left column
         x = m->x + gaps;
-        y = m->y + (subcol_height_left * (current_row_left)) + gaps;
+        y = m->y + (subcol_height_left * (current_row_left)) + (current_row_left > 0 ? 0 : gaps);
         width = subcol_width - gaps;
-        height = subcol_height_left - (gaps * 2);
+        height = subcol_height_left - (current_row_left > 0 ? gaps : gaps * 2);
         current_row_left++;
         break;
     }
@@ -225,6 +225,56 @@ void tile_fibonacci(monitor *m){
     }
     
     if(m->fullscreen_enabled && m->fullscreen == itr->data_noptr){
+      x = 0;
+      y = 0;
+      w = m->width;
+      h = m->height;
+
+      XRaiseWindow(dpy,itr->data_noptr);
+    }
+
+    move_resize(
+      itr->data_noptr,
+      x + m->x, y + m->y,
+      w, h
+    );
+
+    ind++;
+  }
+}
+
+/*
+ *  ----------- 
+ * |     M     |
+ * |           |
+ * |-----------|
+ * | 1 | 2 | 3 |
+ * |___________|
+ */
+void tile_bottomstack(monitor *m){
+  int x, y,
+      w, h;
+
+  int gaps = (m->gaps_enabled ? GAPS : 0),
+      indx = 0;
+
+  int subcol_height = (m->windows->size > 1 ? m->height * STACK_RATIO : 0);
+  int subcol_width  = (m->windows->size > 1 ? m->width / (m->windows->size - 1) : 0);
+
+  list_foreach_noroot(m->windows){
+    if(indx == 0){
+      x = m->x + gaps;
+      y = m->y + gaps;
+      w = m->width - (gaps * 2);
+      h = m->height - (gaps * 2) - subcol_height;
+    } else {
+      x = m->x + (indx == 1 ? gaps : 0) + (subcol_width * (indx - 1));
+      y = m->y + m->height - subcol_height;
+      w = subcol_width - (indx == 1 ? gaps * 2 : gaps);
+      h = subcol_height - gaps;
+    }
+
+    if(m->fullscreen_enabled && m->fullscreen == itr->data_noptr){
       x = m->x;
       y = m->y;
       w = m->width;
@@ -239,7 +289,7 @@ void tile_fibonacci(monitor *m){
       w, h
     );
 
-    ind++;
+    indx++;
   }
 }
 

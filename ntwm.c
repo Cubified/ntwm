@@ -17,9 +17,9 @@
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xrandr.h>
 
+#include "config.h"
 #include "logging.h"
 #include "list.h"
-#include "config.h"
 
 bool running = true;
 bool has_thrown = false;

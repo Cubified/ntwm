@@ -19,9 +19,11 @@ static void spawn(const char *cmd);
 static void select_input(Window win);
 static void kill_focused();
 static void move_resize(Window win, int x, int y, int w, int h);
+static void set_cursorpos(int x, int y);
 static void sighandler(int signo);
 static void setup_atoms();
 static void set_cursor(unsigned int cursor_name);
+static void set_focused(Window win);
 static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
 static int round_float(float n);
@@ -164,6 +166,24 @@ void move_resize(Window win, int x, int y, int w, int h){
 }
 
 /*
+ * Sets the position of the cursor
+ * onscreen, used when moving a
+ * window to a new monitor and
+ * upon window map
+ */
+void set_cursorpos(int x, int y){
+  XWarpPointer(
+    dpy,
+    None,
+    root,
+    0, 0,
+    0, 0,
+    x, y
+  );
+  XFlush(dpy);
+}
+
+/*
  * Quits ntwm on SIGINT
  */
 void sighandler(int signo){
@@ -188,6 +208,18 @@ void setup_atoms(){
 void set_cursor(unsigned int cursor_name){
   Cursor cursor = XCreateFontCursor(dpy, cursor_name);
   XDefineCursor(dpy,root,cursor);
+}
+
+/*
+ * Sets the currently focused
+ * window, both through the
+ * "focused" variable as
+ * well as through the X
+ * server
+ */
+void set_focused(Window win){
+  focused = win;
+  XSetInputFocus(dpy,win,RevertToParent,CurrentTime);
 }
 
 /*

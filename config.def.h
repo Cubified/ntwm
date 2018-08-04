@@ -2,9 +2,9 @@
  * config.h: ntwm configuration
  */
 
-#define VER "1.0.1"
+#define VER "1.1.0"
 #define GAPS 50
-#define GRID_RATIO 0.3
+#define STACK_RATIO 0.3
 #define MULTIHEAD /* multimonitor support */
 #define MASK Mod1Mask
 #define SHIFT ShiftMask
@@ -29,7 +29,9 @@ const key keys[] = {
   {MASK|SHIFT,  XK_f,       "full",   NULL},
   {MASK|SHIFT,  XK_Right,   "next",   NULL},
   {MASK|SHIFT,  XK_Left,    "prev",   NULL},
-  {MASK,        XK_o,       "mode",   NULL}
+  {MASK,        XK_o,       "mode",   NULL},
+  {MASK,        XK_Right,   "nwin",   NULL},
+  {MASK,        XK_Left,    "pwin",   NULL}
 };
 
 typedef void (*func)();

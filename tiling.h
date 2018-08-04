@@ -9,12 +9,13 @@ static void tile();
 static void toggle_gaps(monitor *current_monitor);
 static void toggle_fullscreen(monitor *current_monitor, Window win);
 static void cycle_monitors(Window win, int dir);
+static void cycle_windows(node *windows, Window current, int dir);
 static void next_mode();
 
 /*
  * Iterates over each monitor,
- * runs the set tiling mode
- * per config.h
+ * arranges windows using the
+ * current tiling mode
  */
 void tile(){
   monitor *m;
@@ -48,17 +49,13 @@ void toggle_fullscreen(monitor *current_monitor, Window win){
  * Moves a window to either the previous
  * or next available monitor
  */
-void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next
+void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next (TODO)
   if(valid_window(focused)){
     monitor *current_mon = monitors->next->data,
             *next_mon = monitors->next->data;
     node *elem = current_mon->windows->next,
          *n;
-#if (dir == 1)
     list_foreach_noroot(monitors){
-#elif (dir == 0)
-    list_foreach_reverse_noroot(monitors){
-#endif
       current_mon = itr->data;
       elem = list_find(current_mon->windows,NULL,win);
       if(elem != NULL && elem->data_noptr == win){
@@ -77,16 +74,10 @@ void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next
       n = list_push(next_mon->windows);
       n->data_noptr = win;
 
-      XWarpPointer(
-        dpy, 
-        None,
-        root,
-        0, 0,
-        0, 0,
+      set_cursorpos(
         next_mon->x + (next_mon->width / 2),
         next_mon->y + (next_mon->height / 2)
       );
-      XFlush(dpy);
 
       tile();
     }
@@ -94,8 +85,38 @@ void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next
 }
 
 /*
+ * Focuses the previous/next window
+ * in a monitor's list
+ */
+void cycle_windows(node *windows, Window current, int dir){
+  node *elem;
+  list_foreach_noroot(windows){
+    if(itr->data_noptr == current){
+      elem = itr;
+      break;
+    }
+  }
+
+  switch(dir){
+    case 0:
+      if(elem->prev == windows){
+        set_focused(windows->end->data_noptr);
+      } else {
+        set_focused(elem->prev->data_noptr);
+      }
+      break;
+    case 1:
+      if(elem->next == NULL){
+        set_focused(windows->next->data_noptr);
+      } else {
+        set_focused(elem->next->data_noptr);
+      }
+      break;
+  }
+}
+
+/*
  * Rotates to the next tiling mode
- * (not yet working)
  */
 void next_mode(){
   mode_index++;
