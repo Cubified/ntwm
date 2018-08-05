@@ -14,15 +14,11 @@ typedef struct node {
   struct node *end;
 } node;
 
-//
-
 #define list_foreach(root)        node *itr;for(itr=root;itr!=NULL;itr=itr->next)
 #define list_foreach_noroot(root) node *itr;for(itr=root->next;itr!=NULL;itr=itr->next)
 
 #define list_foreach_reverse(root)        node *itr;for(itr=root->end;itr!=NULL;itr=itr->prev)
 #define list_foreach_reverse_noroot(root) node *itr;for(itr=root->end;itr!=root;itr=itr->prev)
-
-//
 
 static node *node_create();
 
@@ -35,8 +31,6 @@ static void list_pop(node *root, node *elem);
 static void list_free(node *root);
 
 static int list_sizeof(node *root);
-
-//
 
 /*
  * Creates a new node (not to be used

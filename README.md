@@ -29,7 +29,7 @@ All of the following window managers have multimonitor support.
 ### Prerequisites:
 
     libX11, libXrandr
-    gcc, make, pkg-config
+    gcc, make
 
 gcc is not necessarily required (tcc or clang can take its place)
 
@@ -121,12 +121,23 @@ ntwm supports running any shell command or script at startup through the `autost
 
 ### Tiling Modes
 
-By default, ntwm supports three tiling modes (with more coming):
+By default, ntwm supports the following tiling modes (with more coming):
 
 - Grid
+
+![grid](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
+
 - Dualstack
+
+![dualstack](https://github.com/Cubified/ntwm/blob/master/modes/dualstack.png)
+
 - Fibonacci
+
+![fibonacci](https://github.com/Cubified/ntwm/blob/master/modes/fibonacci.png)
+
 - Bottomstack
+
+![bottomstack](https://github.com/Cubified/ntwm/blob/master/modes/bottomstack.png)
 
 To edit the order in which these modes are selected, adjust the `modes` variable in `config.h`.
 
@@ -141,6 +152,8 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Add support for changing the tiling mode only on the currently focused monitor
 - Add comments
 - Move from -Os to -O3 optimization (makes very little difference)
+- Remove unnecessary `pkg-config` dependency
+- Replace `which` calls with executable paths in Makefile
 
 ### v1.0.1
 
@@ -170,7 +183,8 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
-- More tiling modes
+- Fix broken tiling upon dragging chromium tabs
+- More tiling modes (?)
 
 More long-term, complex, or nonessential plans include:
 

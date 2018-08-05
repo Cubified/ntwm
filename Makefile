@@ -2,8 +2,8 @@ all: config.h ntwm
 
 CC=gcc
 
-CFLAGS=`pkg-config --cflags x11 xrandr`
-LIBS=`pkg-config --libs x11 xrandr`
+CFLAGS=
+LIBS=-lX11 -lXrandr
 
 FLAGS=-O3 -pipe -s
 DEBUGFLAGS=-Og -Wall -pipe -g
@@ -13,8 +13,8 @@ OUT=ntwm
 
 INSTALLDIR=/usr/local/bin
 
-RM=`which rm`
-CP=`which cp`
+RM=/bin/rm
+CP=/bin/cp
 
 ntwm:
 	$(CC) $(CFLAGS) $(SOURCES) -o $(OUT) $(LIBS) $(FLAGS)

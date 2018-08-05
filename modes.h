@@ -6,6 +6,37 @@
 #define __MODES_H
 
 /*
+ * Function definitions are in config.h,
+ * and take advantage of the fact that
+ *
+ *    static void function()
+ *
+ * is not the same as
+ *
+ *    static void function(void)
+ *
+ * meaning it is possible to declare
+ * additional parameters (such as a
+ * pointer to a monitor) later if
+ * (void) is not specified.
+ */
+
+/*
+ * This is relevant because the monitor
+ * struct does not exist in config.h
+ * (because multihead.h is included
+ * after), but does in modes.h.
+ */
+
+/*
+ * The purpose of this is to (somewhat)
+ * cleanly separate tiling logic from
+ * its customization without keeping
+ * all code in ntwm.c (dwm being an
+ * example of this).
+ */
+
+/*
  *  ___________
  * |  M  |  2  |
  * |_____|_____|

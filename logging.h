@@ -26,6 +26,7 @@ void info(const char *str,...){
   printf(ANSI_COLOR_RESET "\n");
   va_end(args);
 }
+
 void error(const char *str,...){
   va_list args;
 
@@ -35,6 +36,7 @@ void error(const char *str,...){
   printf(ANSI_COLOR_RESET "\n");
   va_end(args);
 }
+
 void debug(const char *str,...){
   va_list args;
 

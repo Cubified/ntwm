@@ -49,13 +49,19 @@ void toggle_fullscreen(monitor *current_monitor, Window win){
  * Moves a window to either the previous
  * or next available monitor
  */
-void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next (TODO)
+void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next
   if(valid_window(focused)){
     monitor *current_mon = monitors->next->data,
             *next_mon = monitors->next->data;
     node *elem = current_mon->windows->next,
-         *n;
-    list_foreach_noroot(monitors){
+         *new_elem,
+         *itr;
+    // This is certainly not an ideal solution, but it does work
+    for(
+      itr=(dir ? monitors->next : monitors->end);
+      itr!=NULL;
+      itr=(dir ? itr->next : itr->prev)
+    ){
       current_mon = itr->data;
       elem = list_find(current_mon->windows,NULL,win);
       if(elem != NULL && elem->data_noptr == win){
@@ -71,8 +77,9 @@ void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next (TODO)
        next_mon != NULL &&
        elem != NULL){
       list_pop(current_mon->windows,elem);
-      n = list_push(next_mon->windows);
-      n->data_noptr = win;
+
+      new_elem = list_push(next_mon->windows);
+      new_elem->data_noptr = win;
 
       set_cursorpos(
         next_mon->x + (next_mon->width / 2),
@@ -89,7 +96,7 @@ void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next (TODO)
  * in a monitor's list
  */
 void cycle_windows(node *windows, Window current, int dir){
-  node *elem;
+  node *elem = NULL;
   list_foreach_noroot(windows){
     if(itr->data_noptr == current){
       elem = itr;
@@ -97,21 +104,23 @@ void cycle_windows(node *windows, Window current, int dir){
     }
   }
 
-  switch(dir){
-    case 0:
-      if(elem->prev == windows){
-        set_focused(windows->end->data_noptr);
-      } else {
-        set_focused(elem->prev->data_noptr);
-      }
-      break;
-    case 1:
-      if(elem->next == NULL){
-        set_focused(windows->next->data_noptr);
-      } else {
-        set_focused(elem->next->data_noptr);
-      }
-      break;
+  if(elem != NULL){
+    switch(dir){
+      case 0:
+        if(elem->prev == windows){
+          set_focused(windows->end->data_noptr);
+        } else {
+          set_focused(elem->prev->data_noptr);
+        }
+        break;
+      case 1:
+        if(elem->next == NULL){
+          set_focused(windows->next->data_noptr);
+        } else {
+          set_focused(elem->next->data_noptr);
+        }
+        break;
+    }
   }
 }
 
