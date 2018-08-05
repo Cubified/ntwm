@@ -22,7 +22,7 @@ void tile(){
   list_foreach_noroot(monitors){
     m = itr->data;
     
-    modes[mode_index](m);
+    modes[m->mode](m);
   }
 }
 
@@ -119,9 +119,10 @@ void cycle_windows(node *windows, Window current, int dir){
  * Rotates to the next tiling mode
  */
 void next_mode(){
-  mode_index++;
-  if(mode_index >= LENGTH(modes)){
-    mode_index = 0;
+  monitor *m = find_monitor();
+  m->mode++;
+  if(m->mode >= LENGTH(modes)){
+    m->mode = 0;
   }
   tile();
 }

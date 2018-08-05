@@ -11,6 +11,7 @@ typedef struct monitor {
   int height;
   int x;
   int y;
+  int mode;
   bool gaps_enabled;
   bool fullscreen_enabled;
   Window fullscreen;
@@ -41,6 +42,7 @@ void multihead_setup(){
       mon->height = crtc_info->height;
       mon->x = crtc_info->x;
       mon->y = crtc_info->y;
+      mon->mode = 0;
       mon->gaps_enabled = true;
       mon->fullscreen_enabled = false;
       mon->fullscreen = 0;
@@ -162,6 +164,7 @@ void multihead_setup(){
   monitor->height = XHeightOfScreen(screen);
   monitor->x = 0;
   monitor->y = 0;
+  monitor->mode = 0;
   monitor->gaps_enabled = true;
   monitor->fullscreen_enabled = false;
   monitor->fullscreen = 0;

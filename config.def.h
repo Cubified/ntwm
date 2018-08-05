@@ -39,9 +39,11 @@ typedef void (*func)();
 static void tile_grid();
 static void tile_dualstack();
 static void tile_fibonacci();
+static void tile_bottomstack();
 
 const func modes[] = {
   tile_grid,
   tile_dualstack,
-  tile_fibonacci
+  tile_fibonacci,
+  tile_bottomstack
 };
