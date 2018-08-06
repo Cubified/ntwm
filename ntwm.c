@@ -44,9 +44,7 @@ node *monitors;
 
 #include "util.h"
 #include "multihead.h"
-
 #include "modes.h"
-
 #include "tiling.h"
 #include "events.h"
 

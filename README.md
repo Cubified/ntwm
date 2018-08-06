@@ -1,3 +1,5 @@
+![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
+
 # ntwm v1.1.0
 
 A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
@@ -6,7 +8,7 @@ ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and othe
 
 ## Screenshot
 
-![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
+![screenshot](https://github.com/Cubified/ntwm/blob/master/modes/grid.png)
 
 ---
 
@@ -125,7 +127,7 @@ By default, ntwm supports the following tiling modes (with more coming):
 
 - Grid
 
-![grid](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
+![grid](https://github.com/Cubified/ntwm/blob/master/modes/grid.png)
 
 - Dualstack
 
@@ -154,6 +156,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Move from -Os to -O3 optimization (makes very little difference)
 - Remove unnecessary `pkg-config` dependency
 - Replace `which` calls with executable paths in Makefile
+- Add (impressively mediocre) logo
 
 ### v1.0.1
 

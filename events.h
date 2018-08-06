@@ -140,14 +140,7 @@ void screenchange_notify(XEvent *e){
   last_call = "screenchange";
 
   multihead_resize();
- 
-  monitor *m;
 
-  list_foreach(monitors){
-    m = itr->data;
-    if(m != NULL && m->windows != NULL){
-      tile();
-    }
-  }
+  tile();
 }
 #endif
