@@ -152,6 +152,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Add "nwin" and "pwin" commands in config.h (for cycling through windows)
 - Add bottomstack tiling mode
 - Add support for changing the tiling mode only on the currently focused monitor
+- Add `BAR_HEIGHT` directive in `config.h`
 - Add comments
 - Move from -Os to -O3 optimization (makes very little difference)
 - Remove unnecessary `pkg-config` dependency

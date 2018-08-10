@@ -4,6 +4,7 @@
 
 #define VER "1.1.0"
 #define GAPS 50
+#define BAR_HEIGHT 0
 #define STACK_RATIO 0.3
 #define MULTIHEAD /* multimonitor support */
 #define MASK Mod1Mask
