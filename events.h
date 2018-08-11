@@ -22,7 +22,7 @@ void map_request(XEvent *e){
 
   int wintype = window_gettype(ev->window);
 
-  if(wintype == 0){
+  if(wintype == window_normal){
     node *list = find_monitor()->windows;
 
     node *n = list_push(list);
@@ -43,12 +43,13 @@ void map_request(XEvent *e){
   if(wintype == window_dock || wintype == window_taskbar){
     multihead_addbar(ev->window);
     tile();
+  } else if(wintype == window_dialog){
+    center_window(ev->window);
   }
 }
 
 /*
  * Updates a window's configuration
- * (extremely complex description)
  */
 void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;

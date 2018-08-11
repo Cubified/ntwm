@@ -1,6 +1,6 @@
 ![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
 
-# ntwm v1.1.0
+# ntwm v1.1.1
 
 A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
 
@@ -151,6 +151,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 - Add (legitimate) bar support
 - Add support for splash screens and dialogs
+- Set `_NET_WM_NAME` atom (meaning neofetch no longer displays ntwm as a de)
 
 ### v1.1.0
 
@@ -196,3 +197,9 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Fix ghost windows upon opening gimp
 - Borders/titlebars
   - Would not require reparenting, but would require some refactoring
+
+## What Will (Likely) Never be Implemented
+
+- Workspaces
+- Full/more complete EWMH/ICCCM support
+- Floating mode

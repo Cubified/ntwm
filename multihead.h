@@ -17,17 +17,14 @@ typedef struct monitor {
   Window fullscreen;
 } monitor;
 
-/*
- * Arguments are not specified
- * here, done for aesthetics
- */
-
 static void multihead_setup();
 static void multihead_free();
 static void multihead_resize();
+static monitor *find_monitor();
+
 static void multihead_addbar();
 static void multihead_delbar();
-static monitor *find_monitor();
+static monitor *monitor_atpos(int x, int y);
 
 #ifdef MULTIHEAD
 
@@ -131,26 +128,7 @@ monitor *find_monitor(){
     &mask_return
   );
 
-  int mon_x, mon_y,
-      mon_w, mon_h;
-  monitor *m = (monitor*)monitors->next->data;
-
-  list_foreach_noroot(monitors){
-    m = (monitor*)itr->data;
-    mon_x = m->x;
-    mon_y = m->y;
-    mon_w = m->width;
-    mon_h = m->height;
-
-    if(pos_x <= mon_x + mon_w &&
-       pos_x >= mon_x &&
-       pos_y <= mon_y + mon_h &&
-       pos_y >= mon_y){
-      break;
-    }
-  }
-
-  return m; // Return a monitor, even if it is not the correct one
+  return monitor_atpos(pos_x,pos_y);
 }
 
 #endif
@@ -223,25 +201,27 @@ monitor *find_monitor(){
 /*
  * Reduces the size of the
  * current monitor to make
- * room for a taskbar
+ * room for a taskbar,
+ * moving it down if
+ * necessary
  */
-void multihead_addbar(Window win){
-  monitor *m = find_monitor();
-  
-  Window root_notused;
-  int x_notused, y;
-  unsigned int w_notused, h,
-    borderwidth_notused,
-    depth_notused;
+void multihead_addbar(Window win){ 
+  Window root_ofwin;
+  int x, y;
+  unsigned int w, h,
+    borderwidth,
+    depth;
   XGetGeometry(
     dpy,
     win,
-    &root_notused,
-    &x_notused, &y,
-    &w_notused, &h,
-    &borderwidth_notused,
-    &depth_notused
+    &root_ofwin,
+    &x, &y,
+    &w, &h,
+    &borderwidth,
+    &depth
   ); 
+
+  monitor *m = monitor_atpos(x,y);
 
   node *newbar = list_push(bars);
   newbar->data = malloc(sizeof(int));
@@ -271,6 +251,33 @@ void multihead_delbar(Window win){
     }
     list_pop(bars,bar);
   }
+}
+
+/*
+ * Returns which monitor contains
+ * a given point
+ */
+monitor *monitor_atpos(int x, int y){
+  int mon_x, mon_y,
+      mon_w, mon_h;
+  monitor *m = monitors->next->data;
+
+  list_foreach_noroot(monitors){
+    m = (monitor*)itr->data;
+    mon_x = m->x;
+    mon_y = m->y;
+    mon_w = m->width;
+    mon_h = m->height;
+
+    if(x <= mon_x + mon_w &&
+       x >= mon_x &&
+       y <= mon_y + mon_h &&
+       y >= mon_y){
+      break;
+    }
+  }
+
+  return m; // Return a monitor, even if it is not the correct one
 }
 
 #endif

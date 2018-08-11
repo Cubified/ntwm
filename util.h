@@ -10,7 +10,9 @@
 enum {
   atom_protocols,
   atom_delete,
-  atom_type
+  atom_type,
+  atom_name,
+  atom_check
 };
 
 enum {
@@ -18,7 +20,8 @@ enum {
   window_dock,
   window_dialog,
   window_splash,
-  window_taskbar
+  window_taskbar,
+  window_utility
 };
 
 static void init();
@@ -33,7 +36,6 @@ static void sighandler(int signo);
 static void setup_atoms();
 static void set_cursor(unsigned int cursor_name);
 static void set_focused(Window win);
-static void center_window(Window win);
 static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
 static int round_float(float n);
@@ -65,6 +67,9 @@ void init(){
   establish_keybinds(root);
 
   setup_atoms();
+
+  XChangeProperty(dpy,root,atoms[atom_check],XA_WINDOW,32,PropModeReplace,(unsigned char *)&root,1);
+  XChangeProperty(dpy,root,atoms[atom_name],XA_STRING,8,PropModeReplace,"ntwm",4);
   
   set_cursor(XC_arrow);
 
@@ -209,6 +214,8 @@ void setup_atoms(){
   atoms[atom_protocols] = XInternAtom(dpy,"WM_PROTOCOLS",false);
   atoms[atom_delete] = XInternAtom(dpy,"WM_DELETE_WINDOW",false);
   atoms[atom_type] = XInternAtom(dpy,"_NET_WM_WINDOW_TYPE",false);
+  atoms[atom_name] = XInternAtom(dpy,"_NET_WM_NAME",false);
+  atoms[atom_check] = XInternAtom(dpy,"_NET_SUPPORTING_WM_CHECK",false);
 }
 
 /*
@@ -360,6 +367,8 @@ int window_gettype(Window win){
       return window_splash;
     } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_TASKBAR") == 0){
       return window_taskbar;
+    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_UTILITY") == 0){
+      return window_utility;
     } else {
       return window_normal;
     }
