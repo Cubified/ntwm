@@ -147,6 +147,11 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## Changelog
 
+### v1.1.1
+
+- Add (legitimate) bar support
+- Add support for splash screens and dialogs
+
 ### v1.1.0
 
 - Add "nwin" and "pwin" commands in config.h (for cycling through windows)
@@ -188,11 +193,6 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 ## To-Do
 
 - Fix broken tiling upon dragging chromium tabs
-- More tiling modes (?)
-
-More long-term, complex, or nonessential plans include:
-
-- Bar support
-  - Current workaround (for polybar): `override-redirect = true` in bar config
-- Borders (?)
-  - Would require reparenting (and therefore major refactoring)
+- Fix ghost windows upon opening gimp
+- Borders/titlebars
+  - Would not require reparenting, but would require some refactoring

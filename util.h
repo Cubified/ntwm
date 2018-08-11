@@ -9,7 +9,16 @@
 
 enum {
   atom_protocols,
-  atom_delete
+  atom_delete,
+  atom_type
+};
+
+enum {
+  window_normal,
+  window_dock,
+  window_dialog,
+  window_splash,
+  window_taskbar
 };
 
 static void init();
@@ -24,12 +33,14 @@ static void sighandler(int signo);
 static void setup_atoms();
 static void set_cursor(unsigned int cursor_name);
 static void set_focused(Window win);
+static void center_window(Window win);
 static int send_event(Window win, Atom atom);
 static int on_x_error(Display *d, XErrorEvent *e);
 static int round_float(float n);
 static int closest_even(int n);
 static int closest_odd(int n);
 static int valid_window(Window win);
+static int window_gettype(Window win);
 
 /*
  * Initialize the connection
@@ -46,6 +57,7 @@ void init(){
   root = DefaultRootWindow(dpy);
   screen = DefaultScreenOfDisplay(dpy);
   focused = 0;
+  bars = list_init();
 
   XSetErrorHandler(&on_x_error);
 
@@ -146,7 +158,6 @@ void kill_focused(){
 }
 
 /*
- * Extremely complex functionality:
  * Moves and resizes a window
  */
 void move_resize(Window win, int x, int y, int w, int h){
@@ -197,6 +208,7 @@ void sighandler(int signo){
 void setup_atoms(){
   atoms[atom_protocols] = XInternAtom(dpy,"WM_PROTOCOLS",false);
   atoms[atom_delete] = XInternAtom(dpy,"WM_DELETE_WINDOW",false);
+  atoms[atom_type] = XInternAtom(dpy,"_NET_WM_WINDOW_TYPE",false);
 }
 
 /*
@@ -309,6 +321,50 @@ int closest_odd(int n){
  */
 int valid_window(Window win){
   return (focused != 0 && focused != root);
+}
+
+/*
+ * Returns 1 if _NET_WM_WINDOW_TYPE
+ * equals _NET_WM_WINDOW_TYPE_DOCK
+ * (and 0 otherwise)
+ */
+int window_gettype(Window win){
+  Atom          real;
+  int           fmt;
+  unsigned long extra;
+  unsigned long n_items;
+  unsigned char *prop;
+
+  int success = XGetWindowProperty(
+    dpy,
+    win,
+    atoms[atom_type],
+    0L,
+    2L,
+    false,
+    AnyPropertyType,
+    &real,
+    &fmt,
+    &n_items,
+    &extra,
+    &prop
+  );
+
+  if(success == Success && prop != NULL){
+    char *name = XGetAtomName(dpy,*(Atom*)prop);
+    if(strcmp(name,"_NET_WM_WINDOW_TYPE_DOCK") == 0){
+      return window_dock;
+    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_DIALOG") == 0){
+      return window_dialog;
+    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_SPLASH") == 0){
+      return window_splash;
+    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_TASKBAR") == 0){
+      return window_taskbar;
+    } else {
+      return window_normal;
+    }
+  }
+  return window_normal;
 }
 
 #endif

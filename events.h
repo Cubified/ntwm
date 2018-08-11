@@ -20,19 +20,30 @@ void map_request(XEvent *e){
   
   last_call = "map";
 
-  node *list = find_monitor()->windows;
+  int wintype = window_gettype(ev->window);
 
-  node *n = list_push(list);
-  n->data_noptr = ev->window;
+  if(wintype == 0){
+    node *list = find_monitor()->windows;
 
-  tile();
+    node *n = list_push(list);
+    n->data_noptr = ev->window;
 
-  select_input(ev->window);
-  establish_keybinds(ev->window);
+    tile();
 
-  XMapWindow(dpy,ev->window);
+    select_input(ev->window);
+    establish_keybinds(ev->window);
+
+    XMapWindow(dpy,ev->window);
+
+    set_focused(ev->window);
+  } else {
+    XMapWindow(dpy,ev->window);
+  }
   
-  set_focused(ev->window);
+  if(wintype == window_dock || wintype == window_taskbar){
+    multihead_addbar(ev->window);
+    tile();
+  }
 }
 
 /*
@@ -73,6 +84,12 @@ void unmap_notify(XEvent *e){
   if(elem != NULL){
     list_pop(list,elem);
     tile();
+  } else {
+    node *bar = list_find(bars,NULL,ev->window);
+    if(bar != NULL){
+      multihead_delbar(bar->data_noptr);
+      tile();
+    }
   }
 }
 

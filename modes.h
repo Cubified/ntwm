@@ -50,8 +50,7 @@ void tile_grid(monitor *m){
     col_number, row_number,
     x, y,
     w, h,
-    gaps,
-    bar;
+    gaps;
   Window win;
   node *list = m->windows;
 
@@ -69,7 +68,6 @@ void tile_grid(monitor *m){
   rows = clients_count / cols;
 
   gaps = (m->gaps_enabled ? GAPS : 0);
-  bar  = BAR_HEIGHT + gaps;
 
   col_height = m->height - gaps;
   col_width = (m->width - gaps) / (cols ? cols : 1);
@@ -86,10 +84,6 @@ void tile_grid(monitor *m){
     y = row_number * col_height / rows + gaps + m->y;
     w = col_width - gaps;
     h = (col_height / rows) - gaps;
-
-    if(row_number == rows - 1 && gaps){
-      h -= bar;
-    }
 
     win = itr->data_noptr;
 
@@ -132,7 +126,6 @@ void tile_dualstack(monitor *m){
   }
 
   int gaps = (m->gaps_enabled ? GAPS : 0);
-  int bar  = BAR_HEIGHT + gaps;
   int cols = (len >= 3 ? 3 : len);
 
   float subcol_width_exact = m->width * STACK_RATIO;
@@ -176,7 +169,6 @@ void tile_dualstack(monitor *m){
       case 0: // Main, central window
         y = m->y + gaps;
         height = m->height - (gaps * 2);
-        height -= (gaps ? bar : 0);
         switch(cols){
           case 1:
             x = m->x + gaps;
@@ -198,19 +190,13 @@ void tile_dualstack(monitor *m){
         width = subcol_width - gaps;
         height = subcol_height_right - (current_row_right > 0 ? gaps : gaps * 2);
         current_row_right++;
-        if(current_row_right == win_right){
-          height -= (gaps ? bar : 0);
-        }
         break;
       case 2: // Left column
         x = m->x + gaps;
         y = m->y + (subcol_height_left * (current_row_left)) + (current_row_left > 0 ? 0 : gaps);
         width = subcol_width - gaps;
-        height = subcol_height_left - (current_row_left > 0 ? gaps : gaps * 2); 
+        height = subcol_height_left - (current_row_left > 0 ? gaps : gaps * 2);
         current_row_left++;
-        if(current_row_left == win_left){
-          height -= (gaps ? bar : 0);
-        }
         break;
     }
     
@@ -246,14 +232,13 @@ void tile_dualstack(monitor *m){
  * |_____|__|__|
  */
 void tile_fibonacci(monitor *m){
-  int gaps = (m->gaps_enabled ? GAPS : 0),
-      bar  = BAR_HEIGHT + gaps;
+  int gaps = (m->gaps_enabled ? GAPS : 0);
 
   int ind = 0,
       x = gaps,
       y = gaps,
       w = m->width - 2 * gaps,
-      h = m->height - 2 * gaps - (gaps ? bar : 0);
+      h = m->height - 2 * gaps;
 
   list_foreach_noroot(m->windows){
     if(ind % 2){
@@ -302,7 +287,6 @@ void tile_bottomstack(monitor *m){
       w, h;
 
   int gaps = (m->gaps_enabled ? GAPS : 0),
-      bar  = BAR_HEIGHT + gaps,
       indx = 0;
 
   int subcol_height = (m->windows->size > 1 ? m->height * STACK_RATIO : 0);
@@ -318,7 +302,7 @@ void tile_bottomstack(monitor *m){
       x = m->x + (indx == 1 ? gaps : 0) + (subcol_width * (indx - 1));
       y = m->y + m->height - subcol_height;
       w = subcol_width - (indx == 1 ? gaps * 2 : gaps);
-      h = subcol_height - gaps - (gaps ? bar : 0);
+      h = subcol_height - gaps;
     }
 
     if(m->fullscreen_enabled && m->fullscreen == itr->data_noptr){

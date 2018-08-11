@@ -17,9 +17,16 @@ typedef struct monitor {
   Window fullscreen;
 } monitor;
 
+/*
+ * Arguments are not specified
+ * here, done for aesthetics
+ */
+
 static void multihead_setup();
 static void multihead_free();
 static void multihead_resize();
+static void multihead_addbar();
+static void multihead_delbar();
 static monitor *find_monitor();
 
 #ifdef MULTIHEAD
@@ -212,5 +219,58 @@ monitor *find_monitor(){
 }
 
 #endif
+
+/*
+ * Reduces the size of the
+ * current monitor to make
+ * room for a taskbar
+ */
+void multihead_addbar(Window win){
+  monitor *m = find_monitor();
+  
+  Window root_notused;
+  int x_notused, y;
+  unsigned int w_notused, h,
+    borderwidth_notused,
+    depth_notused;
+  XGetGeometry(
+    dpy,
+    win,
+    &root_notused,
+    &x_notused, &y,
+    &w_notused, &h,
+    &borderwidth_notused,
+    &depth_notused
+  ); 
+
+  node *newbar = list_push(bars);
+  newbar->data = malloc(sizeof(int));
+  *(int*)newbar->data = h;
+  newbar->data_noptr = win;
+  
+  m->height -= h;
+
+  if(y <= (m->height+m->y) / 2){
+    m->y += h;
+    newbar->size = 1;
+  }
+}
+
+/*
+ * Does the opposite of
+ * multihead_addbar()
+ */
+void multihead_delbar(Window win){
+  monitor *m = find_monitor();
+
+  node *bar = list_find(bars,NULL,win);
+  if(bar != NULL){
+    m->height += *(int*)bar->data;
+    if(bar->size){ // Hack? Certainly not /good/
+      m->y -= *(int*)bar->data;
+    }
+    list_pop(bars,bar);
+  }
+}
 
 #endif

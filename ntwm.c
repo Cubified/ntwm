@@ -41,6 +41,7 @@ Window root;
 Atom atoms[2];
 
 node *monitors;
+node *bars;
 
 #include "util.h"
 #include "multihead.h"

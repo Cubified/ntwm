@@ -11,6 +11,7 @@ static void toggle_fullscreen(monitor *current_monitor, Window win);
 static void cycle_monitors(Window win, int dir);
 static void cycle_windows(node *windows, Window current, int dir);
 static void next_mode();
+static void center_window(Window win);
 
 /*
  * Iterates over each monitor,
@@ -134,6 +135,20 @@ void next_mode(){
     m->mode = 0;
   }
   tile();
+}
+
+/*
+ * Centers a window on the
+ * current monitor
+ */
+void center_window(Window win){
+  monitor *m = find_monitor();
+  int gaps = (m->gaps_enabled ? GAPS : 0);
+  move_resize(
+    win,
+    m->x + gaps, m->y + gaps,
+    m->width - (2 * gaps), m->height - (2 * gaps)
+  );
 }
 
 #endif
