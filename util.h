@@ -43,6 +43,7 @@ static int closest_even(int n);
 static int closest_odd(int n);
 static int valid_window(Window win);
 static int window_gettype(Window win);
+static int is_child(Window win);
 
 /*
  * Initialize the connection
@@ -54,6 +55,7 @@ void init(){
   if(dpy == NULL){
     error("Failed to open display.");
     quit();
+    return;
   }
 
   root = DefaultRootWindow(dpy);
@@ -69,7 +71,7 @@ void init(){
   setup_atoms();
 
   XChangeProperty(dpy,root,atoms[atom_check],XA_WINDOW,32,PropModeReplace,(unsigned char *)&root,1);
-  XChangeProperty(dpy,root,atoms[atom_name],XA_STRING,8,PropModeReplace,"ntwm",4);
+  XChangeProperty(dpy,root,atoms[atom_name],XA_STRING,8,PropModeReplace,(unsigned char *)"ntwm",4);
   
   set_cursor(XC_arrow);
 
@@ -369,11 +371,32 @@ int window_gettype(Window win){
       return window_taskbar;
     } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_UTILITY") == 0){
       return window_utility;
-    } else {
-      return window_normal;
     }
   }
   return window_normal;
+}
+
+/*
+ * Returns 1 if the window is
+ * a child of a window other
+ * than root, 0 otherwise
+ */
+int is_child(Window win){
+  Window root,
+         parent,
+         *children;
+  unsigned int count;
+  
+  XQueryTree(
+    dpy,
+    win,
+    &root,
+    &parent,
+    &children,
+    &count
+  );
+
+  return (parent != root);
 }
 
 #endif

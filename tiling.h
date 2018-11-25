@@ -1,5 +1,5 @@
 /*
- * tiling.h: tiling utilities and modes
+ * tiling.h: tiling utilities
  */
 
 #ifndef __TILING_H

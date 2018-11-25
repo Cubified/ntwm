@@ -1,6 +1,6 @@
 ![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
 
-# ntwm v1.1.1
+# ntwm v1.1.2
 
 A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
 
@@ -110,6 +110,8 @@ If your greeter has no option to change the default X session (i.e. _not_ the GT
 | Mod+Shift+Right | Move window to next monitor     |
 | Mod+Shift+Left  | Move window to previous monitor |
 | Mod+O           | Next tiling mode                |
+| Mod+Right       | Focus next window               |
+| Mod+Left        | Focus previous window           |
 
 ---
 
@@ -147,10 +149,17 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## Changelog
 
+### v1.1.2
+
+- Fix ghost windows (such as in gimp)
+- Fix some dialogs not taking focus (chromium)
+- Fix GTK dialogs not centering
+- Add Mod+left/right keybinds to change focus without the mouse
+
 ### v1.1.1
 
 - Add (legitimate) bar support
-- Add support for splash screens and dialogs
+- Add (partial) support for splash screens and dialogs
 - Set `_NET_WM_NAME` atom (meaning neofetch no longer displays ntwm as a de)
 
 ### v1.1.0
@@ -193,8 +202,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
-- Fix broken tiling upon dragging chromium tabs
-- Fix ghost windows upon opening gimp
+- Fix some newly-opened GTK windows not resizing correctly (chromium tabs, gimp)
 - Borders/titlebars
   - Would not require reparenting, but would require some refactoring
 

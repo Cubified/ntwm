@@ -54,7 +54,7 @@ int main(){
 
   init();
 
-  if(!last_err){
+  if(!last_err && running){
     multihead_setup();
     spawn(autostartcmd);
   }

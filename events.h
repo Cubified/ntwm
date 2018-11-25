@@ -10,6 +10,7 @@ static void configure_request(XEvent *e);
 static void unmap_notify(XEvent *e);
 static void key_press(XEvent *e);
 static void enter_notify(XEvent *e);
+static void screenchange_notify(XEvent *e);
 
 /*
  * Adds a new window to the focused
@@ -22,20 +23,22 @@ void map_request(XEvent *e){
 
   int wintype = window_gettype(ev->window);
 
-  if(wintype == window_normal){
+  if(wintype == window_normal && !is_child(ev->window)){
     node *list = find_monitor()->windows;
 
-    node *n = list_push(list);
-    n->data_noptr = ev->window;
+    if(list_find(list,NULL,ev->window) == NULL){
+      node *n = list_push(list);
+      n->data_noptr = ev->window;
 
-    tile();
+      tile();
 
-    select_input(ev->window);
-    establish_keybinds(ev->window);
+      select_input(ev->window);
+      establish_keybinds(ev->window);
 
-    XMapWindow(dpy,ev->window);
+      XMapWindow(dpy,ev->window);
 
-    set_focused(ev->window);
+      set_focused(ev->window);
+    }
   } else {
     XMapWindow(dpy,ev->window);
   }
@@ -44,7 +47,10 @@ void map_request(XEvent *e){
     multihead_addbar(ev->window);
     tile();
   } else if(wintype == window_dialog){
+    select_input(ev->window);
+    establish_keybinds(ev->window);
     center_window(ev->window);
+    set_focused(ev->window);
   }
 }
 
@@ -54,11 +60,14 @@ void map_request(XEvent *e){
 void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
   last_call = "configure";
-  move_resize(
-    ev->window,
-    ev->x, ev->y,
-    ev->width, ev->height
-  );
+  int wintype = window_gettype(ev->window);
+  if(wintype != window_dialog){
+    move_resize(
+      ev->window,
+      ev->x, ev->y,
+      ev->width, ev->height
+    );
+  }
 }
 
 /*
@@ -161,4 +170,5 @@ void screenchange_notify(XEvent *e){
 
   tile();
 }
+
 #endif

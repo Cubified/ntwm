@@ -2,7 +2,7 @@
  * config.h: ntwm configuration
  */
 
-#define VER "1.1.1"
+#define VER "1.1.2"
 #define GAPS 50
 #define STACK_RATIO 0.3
 #define MULTIHEAD /* multimonitor support */

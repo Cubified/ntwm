@@ -22,8 +22,8 @@ static void multihead_free();
 static void multihead_resize();
 static monitor *find_monitor();
 
-static void multihead_addbar();
-static void multihead_delbar();
+static void multihead_addbar(Window win);
+static void multihead_delbar(Window win);
 static monitor *monitor_atpos(int x, int y);
 
 #ifdef MULTIHEAD
