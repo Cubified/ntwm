@@ -154,6 +154,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Fix ghost windows (such as in gimp)
 - Fix some dialogs not taking focus (chromium)
 - Fix GTK dialogs not centering
+- Fix newly-opened GTK windows not tiling correctly
 - Add Mod+left/right keybinds to change focus without the mouse
 - Add DIALOG_RATIO directive in config.h, allow for changes to the size of a dialog on the screen
 
@@ -203,8 +204,8 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
-- Fix some newly-opened GTK windows not resizing correctly (chromium tabs, gimp)
-- Borders/titlebars
+- Fix flickering upon dragging chromium tabs
+- Borders/titlebars?
   - Would not require reparenting, but would require some refactoring
 
 ## What Will (Likely) Never be Implemented

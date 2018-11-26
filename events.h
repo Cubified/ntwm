@@ -67,6 +67,7 @@ void configure_request(XEvent *e){
       ev->x, ev->y,
       ev->width, ev->height
     );
+    tile();
   }
 }
 
