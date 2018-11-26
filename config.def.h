@@ -5,6 +5,7 @@
 #define VER "1.1.2"
 #define GAPS 50
 #define STACK_RATIO 0.3
+#define DIALOG_RATIO 0.7
 #define MULTIHEAD /* multimonitor support */
 #define MASK Mod1Mask
 #define SHIFT ShiftMask

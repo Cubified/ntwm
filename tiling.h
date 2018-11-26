@@ -146,8 +146,10 @@ void center_window(Window win){
   int gaps = (m->gaps_enabled ? GAPS : 0);
   move_resize(
     win,
-    m->x + gaps, m->y + gaps,
-    m->width - (2 * gaps), m->height - (2 * gaps)
+    (m->x + gaps) + ((m->width  - (m->width  * DIALOG_RATIO)) / 2),
+    (m->y + gaps) + ((m->height - (m->height * DIALOG_RATIO)) / 2),
+    (m->width  - (2 * gaps)) * DIALOG_RATIO,
+    (m->height - (2 * gaps)) * DIALOG_RATIO
   );
 }
 

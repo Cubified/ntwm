@@ -16,7 +16,7 @@ ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and othe
 
 All of the following window managers have multimonitor support.
 
-| ntwm | 15kb  |
+| ntwm | 19kb  |
 |------|-------|
 | dwm  | 33kb  |
 | 2bwm | 36kb  |
@@ -155,6 +155,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Fix some dialogs not taking focus (chromium)
 - Fix GTK dialogs not centering
 - Add Mod+left/right keybinds to change focus without the mouse
+- Add DIALOG_RATIO directive in config.h, allow for changes to the size of a dialog on the screen
 
 ### v1.1.1
 

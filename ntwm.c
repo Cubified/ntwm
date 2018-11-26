@@ -38,7 +38,7 @@ Screen *screen;
 XEvent e;
 Window focused;
 Window root;
-Atom atoms[2];
+Atom atoms[5];
 
 node *monitors;
 node *bars;
