@@ -100,18 +100,19 @@ If your greeter has no option to change the default X session (i.e. _not_ the GT
 
 *Note: The default modifier key is Alt*
 
-| Key Combination | Action                          |
-|-----------------|---------------------------------|
-| Mod+Shift+E     | Exit ntwm                       |
-| Mod+Enter       | Start terminal                  |
-| Mod+Shift+Q     | Kill focused window             |
-| Mod+F           | Toggle gaps                     |
-| Mod+Shift+F     | Toggle fullscreen               |
-| Mod+Shift+Right | Move window to next monitor     |
-| Mod+Shift+Left  | Move window to previous monitor |
-| Mod+O           | Next tiling mode                |
-| Mod+Right       | Focus next window               |
-| Mod+Left        | Focus previous window           |
+| Key Combination | Action                             |
+|-----------------|------------------------------------|
+| Mod+Shift+E     | Exit ntwm                          |
+| Mod+Enter       | Start terminal                     |
+| Mod+Shift+Q     | Kill focused window                |
+| Mod+F           | Toggle gaps                        |
+| Mod+Shift+F     | Toggle fullscreen                  |
+| Mod+Shift+Right | Move window to next monitor        |
+| Mod+Shift+Left  | Move window to previous monitor    |
+| Mod+O           | Next tiling mode                   |
+| Mod+Right       | Focus next window                  |
+| Mod+Left        | Focus previous window              |
+| Mod+U           | Reset tiling (for "ghost windows") |
 
 ---
 

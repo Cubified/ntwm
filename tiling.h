@@ -12,6 +12,7 @@ static void cycle_monitors(Window win, int dir);
 static void cycle_windows(node *windows, Window current, int dir);
 static void next_mode();
 static void center_window(Window win);
+static void reset();
 
 /*
  * Iterates over each monitor,
@@ -151,6 +152,16 @@ void center_window(Window win){
     (m->width  - (2 * gaps)) * DIALOG_RATIO,
     (m->height - (2 * gaps)) * DIALOG_RATIO
   );
+}
+
+/*
+ * Resets tiling by clearing
+ * all lists, used to remove
+ * a "ghost window"
+ */
+void reset(){
+  multihead_free();
+  multihead_setup();
 }
 
 #endif

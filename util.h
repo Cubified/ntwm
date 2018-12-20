@@ -26,6 +26,7 @@ enum {
 
 static void init();
 static void quit();
+static void reset();
 static void establish_keybinds(Window win);
 static void spawn(const char *cmd);
 static void select_input(Window win);

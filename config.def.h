@@ -32,7 +32,8 @@ const key keys[] = {
   {MASK|SHIFT,  XK_Left,    "prev",   NULL},
   {MASK,        XK_o,       "mode",   NULL},
   {MASK,        XK_Right,   "nwin",   NULL},
-  {MASK,        XK_Left,    "pwin",   NULL}
+  {MASK,        XK_Left,    "pwin",   NULL},
+  {MASK,        XK_u,       "reset",  NULL}
 };
 
 typedef void (*func)();

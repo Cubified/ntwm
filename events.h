@@ -23,7 +23,7 @@ void map_request(XEvent *e){
 
   int wintype = window_gettype(ev->window);
 
-  if(wintype == window_normal && !is_child(ev->window)){
+  if((wintype == window_normal || wintype == window_utility) && !is_child(ev->window)){
     node *list = find_monitor()->windows;
 
     if(list_find(list,NULL,ev->window) == NULL){
@@ -139,6 +139,8 @@ void key_press(XEvent *e){
         cycle_windows(current_monitor->windows,focused,1);
       } else if(strcmp(keys[i].func,"pwin") == 0){
         cycle_windows(current_monitor->windows,focused,0);
+      } else if(strcmp(keys[i].func,"reset") == 0){
+        reset();
       } else {
         error("Unrecognized command \"%s\" in config.",keys[i].func);
       }
