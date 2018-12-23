@@ -5,8 +5,8 @@ CC=gcc
 CFLAGS=
 LIBS=-lX11 -lXrandr
 
-FLAGS=-O3 -pipe -s
-DEBUGFLAGS=-Og -Wall -pipe -g
+FLAGS=-O3 -pipe -s -ansi -pedantic
+DEBUGFLAGS=-Og -Wall -pipe -g -ansi -pedantic
 
 SOURCES=ntwm.c
 OUT=ntwm

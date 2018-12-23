@@ -12,7 +12,7 @@
 
 #define TERMCMD "xterm"
 
-const char *autostartcmd = "true";
+char *autostartcmd = "true";
 
 typedef struct key {
   unsigned int mod;

@@ -51,14 +51,13 @@ void toggle_fullscreen(monitor *current_monitor, Window win){
  * Moves a window to either the previous
  * or next available monitor
  */
-void cycle_monitors(Window win, int dir){ // 0 is prev, 1 is next
+void cycle_monitors(Window win, int dir){
   if(valid_window(focused)){
     monitor *current_mon = monitors->next->data,
             *next_mon = monitors->next->data;
     node *elem = current_mon->windows->next,
          *new_elem,
          *itr;
-    // This is certainly not an ideal solution, but it does work
     for(
       itr=(dir ? monitors->next : monitors->end);
       itr!=NULL;

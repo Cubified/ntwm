@@ -53,6 +53,7 @@ void tile_grid(monitor *m){
     gaps;
   Window win;
   node *list = m->windows;
+  node *itr;
 
   clients_count = list_sizeof(list);
   if(clients_count == 0){
@@ -75,7 +76,7 @@ void tile_grid(monitor *m){
   row_number = 0;
   i = 0;
 
-  list_foreach_noroot(list){
+  list_foreach_noroot_nodecl(list){
     if(i / rows + 1 > cols - clients_count % cols){
       rows = clients_count / cols + 1;
     }
@@ -119,11 +120,7 @@ void tile_grid(monitor *m){
  */
 void tile_dualstack(monitor *m){
   node *list = m->windows;
-  int len = list_sizeof(list);
-
-  if(len == 0){
-    return;
-  }
+  int len = list_sizeof(list); 
 
   int gaps = (m->gaps_enabled ? GAPS : 0);
   int cols = (len >= 3 ? 3 : len);
@@ -135,38 +132,44 @@ void tile_dualstack(monitor *m){
   int win_left  = closest_odd(len)  / 2;
 
   float subcol_height_right_exact = 
-    (len > 1 ?                              // Return zero if right column does not need to exist
-      (float)m->height / win_right :        // Otherwise, window height is monitor height divided
-      0.0                                   //   by half of the closest even number to the number
-    );                                      //   of windows (essentially a complex way of writing
-                                            //   the number of windows in the right column)
+    (len > 1 ?                              /* Return zero if right column does not need to exist */
+      (float)m->height / win_right :        /* Otherwise, window height is monitor height divided */
+      0.0                                   /*   by half of the closest even number to the number */
+    );                                      /*   of windows (essentially a complex way of writing */
+                                            /*   the number of windows in the right column)       */
   int subcol_height_right = round_float(subcol_height_right_exact);
 
   float subcol_height_left_exact =
-    (len > 2 ?                            // Return zero if the left column does not need to exist
-     (float)m->height / win_left :        // Otherwise, window height is monitor height divided by
-     0.0                                  //   the number of windows in the left column, see above
-    );                                    // A note: every even number of windows corresponds to a
-                                          //   new window in the right column, whereas every odd #
-                                          //   of windows (apart from 1) corresponds to a new left
-                                          //   window
+    (len > 2 ?                            /* Return zero if the left column does not need to exist */
+     (float)m->height / win_left :        /* Otherwise, window height is monitor height divided by */
+     0.0                                  /*   the number of windows in the left column, see above */
+    );                                    /* A note: every even number of windows corresponds to a */
+                                          /*   new window in the right column, whereas every odd # */
+                                          /*   of windows (apart from 1) corresponds to a new left */
+                                          /*   window                                              */
   int subcol_height_left = round_float(subcol_height_left_exact);
 
   int x = 0, y = 0,
       width = 0, height = 0;
 
   int i = 0,
-      current_col = 0, // Zero is center, 1 is right, 2 is left
+      current_col = 0,
       current_row_right = 0,
       current_row_left = 0;
 
   Window win;
 
-  list_foreach_noroot(list){
+  node *itr;
+
+  if(len == 0){
+    return;
+  }
+
+  list_foreach_noroot_nodecl(list){
     win = itr->data_noptr;
 
     switch(current_col){
-      case 0: // Main, central window
+      case 0:
         y = m->y + gaps;
         height = m->height - (gaps * 2);
         switch(cols){
@@ -184,14 +187,14 @@ void tile_dualstack(monitor *m){
             break;
         }
         break;
-      case 1: // Right column
+      case 1:
         x = m->x + (m->width - subcol_width);
         y = m->y + (subcol_height_right * (current_row_right)) + (current_row_right > 0 ? 0 : gaps);
         width = subcol_width - gaps;
         height = subcol_height_right - (current_row_right > 0 ? gaps : gaps * 2);
         current_row_right++;
         break;
-      case 2: // Left column
+      case 2:
         x = m->x + gaps;
         y = m->y + (subcol_height_left * (current_row_left)) + (current_row_left > 0 ? 0 : gaps);
         width = subcol_width - gaps;

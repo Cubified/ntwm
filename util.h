@@ -5,7 +5,7 @@
 #ifndef __UTIL_H
 #define __UTIL_H
 
-#define LENGTH(x) (sizeof(x)/sizeof(x[0])) // Borrowed from dwm
+#define LENGTH(x) (sizeof(x)/sizeof(x[0]))
 
 enum {
   atom_protocols,
@@ -28,7 +28,7 @@ static void init();
 static void quit();
 static void reset();
 static void establish_keybinds(Window win);
-static void spawn(const char *cmd);
+static void spawn(char *cmd);
 static void select_input(Window win);
 static void kill_focused();
 static void move_resize(Window win, int x, int y, int w, int h);
@@ -96,14 +96,18 @@ void quit(){
  * used with the "spawn"
  * command in config.h
  */
-void spawn(const char *cmd){
+void spawn(char *cmd){
   pid_t process = fork();
 
   if(process < 0){
     error("Could not fork process.");
   } else if(process == 0){
-    char *argv[] = {(char *)cmd, NULL};
-    int retval = execvp(cmd,argv);
+    char *argv[2];
+    int retval;
+
+    argv[0] = cmd;
+    argv[1] = NULL;
+    retval = execvp(cmd,argv);
     if(retval == -1){
       error("Failed to start process.");
     }
@@ -116,7 +120,8 @@ void spawn(const char *cmd){
  * init()
  */
 void establish_keybinds(Window win){
-  for(int i=0;i<LENGTH(keys);i++){
+  int i;
+  for(i=0;i<LENGTH(keys);i++){
     XGrabKey(
       dpy,
       XKeysymToKeycode(dpy,keys[i].keysym),
@@ -151,9 +156,9 @@ void select_input(Window win){
  */
 void kill_focused(){
   if(valid_window(focused)){
-    XUnmapWindow(dpy,focused);
-
     int success = send_event(focused,atoms[atom_delete]);
+    
+    XUnmapWindow(dpy,focused);
 
     if(!success){
       XGrabServer(dpy);

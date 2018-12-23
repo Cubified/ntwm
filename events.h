@@ -18,11 +18,10 @@ static void screenchange_notify(XEvent *e);
  */
 void map_request(XEvent *e){
   XMapRequestEvent *ev = &e->xmaprequest;
+  int wintype = window_gettype(ev->window);
   
   last_call = "map";
-
-  int wintype = window_gettype(ev->window);
-
+  
   if((wintype == window_normal || wintype == window_utility) && !is_child(ev->window)){
     node *list = find_monitor()->windows;
 
@@ -59,8 +58,9 @@ void map_request(XEvent *e){
  */
 void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
-  last_call = "configure";
   int wintype = window_gettype(ev->window);
+
+  last_call = "configure";
   if(wintype != window_dialog){
     move_resize(
       ev->window,
@@ -78,10 +78,10 @@ void configure_request(XEvent *e){
  */
 void unmap_notify(XEvent *e){
   XUnmapEvent *ev = &e->xunmap;
+  node *list = find_monitor()->windows;
+  node *elem = list_find(list,NULL,ev->window);
 
   last_call = "unmap";
-
-  node *list = find_monitor()->windows;
 
   if(focused == ev->window){
     if(list->size > 1){
@@ -91,7 +91,6 @@ void unmap_notify(XEvent *e){
     }
   }
 
-  node *elem = list_find(list,NULL,ev->window);
   if(elem != NULL){
     list_pop(list,elem);
     tile();
@@ -109,14 +108,14 @@ void unmap_notify(XEvent *e){
  * defined in config.h
  */
 void key_press(XEvent *e){
+  int i;
   XKeyEvent *ev = &e->xkey;
   KeySym keysym = XkbKeycodeToKeysym(dpy, ev->keycode, 0, 0);
+  monitor *current_monitor = find_monitor();
 
   last_call = "keypress";
 
-  monitor *current_monitor = find_monitor();
-
-  for(int i=0;i<LENGTH(keys);i++){
+  for(i=0;i<LENGTH(keys);i++){
     if(keys[i].keysym == keysym &&
       keys[i].mod == ev->state){
       if(strcmp(keys[i].func,"quit") == 0){

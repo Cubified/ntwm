@@ -33,14 +33,18 @@ static monitor *monitor_atpos(int x, int y);
  * using Xrandr configuration
  */
 void multihead_setup(){
+  int i;
+  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
+
   monitors = list_init();
  
-  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
-  for(int i=0;i<screen_resources->ncrtc;i++){
+  for(i=0;i<screen_resources->ncrtc;i++){
     XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy,screen_resources,screen_resources->crtcs[i]);
 
     if(crtc_info->width > 0){
       monitor *mon = malloc(sizeof(monitor));
+      node *n = list_push(monitors);
+
       mon->windows = list_init();
       mon->width = crtc_info->width;
       mon->height = crtc_info->height;
@@ -51,7 +55,6 @@ void multihead_setup(){
       mon->fullscreen_enabled = false;
       mon->fullscreen = 0;
 
-      node *n = list_push(monitors);
       n->data = mon;
     }
 
@@ -211,6 +214,9 @@ void multihead_addbar(Window win){
   unsigned int w, h,
     borderwidth,
     depth;
+  monitor *m;
+  node *newbar;
+
   XGetGeometry(
     dpy,
     win,
@@ -221,9 +227,9 @@ void multihead_addbar(Window win){
     &depth
   ); 
 
-  monitor *m = monitor_atpos(x,y);
+  m = monitor_atpos(x,y);
 
-  node *newbar = list_push(bars);
+  newbar = list_push(bars);
   newbar->data = malloc(sizeof(int));
   *(int*)newbar->data = h;
   newbar->data_noptr = win;
@@ -246,7 +252,7 @@ void multihead_delbar(Window win){
   node *bar = list_find(bars,NULL,win);
   if(bar != NULL){
     m->height += *(int*)bar->data;
-    if(bar->size){ // Hack? Certainly not /good/
+    if(bar->size){
       m->y -= *(int*)bar->data;
     }
     list_pop(bars,bar);
@@ -277,7 +283,7 @@ monitor *monitor_atpos(int x, int y){
     }
   }
 
-  return m; // Return a monitor, even if it is not the correct one
+  return m;
 }
 
 #endif
