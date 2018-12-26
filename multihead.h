@@ -85,8 +85,8 @@ void multihead_free(){
       list_free(m->windows);
     }
   }
-
   list_free(monitors);
+  list_free(bars);
 }
 
 /*
@@ -174,6 +174,7 @@ void multihead_free(){
     }
   }
   list_free(monitors);
+  list_free(bars);
 }
 
 /*
@@ -236,8 +237,19 @@ void multihead_addbar(Window win){
   
   m->height -= h;
 
+  /*
+   * Bar is most likely a topbar,
+   * move the monitor's
+   * available space
+   * down
+   */
   if(y <= (m->height+m->y) / 2){
     m->y += h;
+    /*
+     * Misuse of this member
+     * to store this
+     * information
+     */
     newbar->size = 1;
   }
 }
@@ -249,13 +261,13 @@ void multihead_addbar(Window win){
 void multihead_delbar(Window win){
   monitor *m = find_monitor();
 
-  node *bar = list_find(bars,NULL,win);
+  node *bar = list_find(bars, NULL, win);
   if(bar != NULL){
     m->height += *(int*)bar->data;
     if(bar->size){
       m->y -= *(int*)bar->data;
     }
-    list_pop(bars,bar);
+    list_pop(bars, bar);
   }
 }
 

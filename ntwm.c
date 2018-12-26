@@ -58,6 +58,8 @@ int main(){
     multihead_setup();
     spawn(autostartcmd);
   }
+
+  tile_existing();
   
   while(running){
     XNextEvent(dpy, &e);

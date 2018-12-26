@@ -39,6 +39,11 @@ void map_request(XEvent *e){
       set_focused(ev->window);
     }
   } else {
+    /*
+     * Window type is not known
+     * or not supported, simply
+     * display it
+     */
     XMapWindow(dpy,ev->window);
   }
   

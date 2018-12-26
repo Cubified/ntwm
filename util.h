@@ -26,7 +26,6 @@ enum {
 
 static void init();
 static void quit();
-static void reset();
 static void establish_keybinds(Window win);
 static void spawn(char *cmd);
 static void select_input(Window win);
@@ -77,6 +76,8 @@ void init(){
   set_cursor(XC_arrow);
 
   signal(SIGINT, sighandler);
+  signal(SIGTERM, sighandler);
+  signal(SIGQUIT, sighandler);
 }
 
 /*
@@ -85,7 +86,8 @@ void init(){
  * the event loop, fairly
  * unimportant because this
  * function is only called
- * on SIGINT
+ * on SIGINT, SIGTERM, and
+ * SIGQUIT
  */
 void quit(){
   running = false;
@@ -208,7 +210,12 @@ void set_cursorpos(int x, int y){
 }
 
 /*
- * Quits ntwm on SIGINT
+ * Quits ntwm on relevant
+ * signals, sending a
+ * dummy event first
+ * to break out of
+ * the synchronous
+ * loop (TODO)
  */
 void sighandler(int signo){
   quit();

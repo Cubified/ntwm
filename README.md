@@ -157,7 +157,10 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Fix GTK dialogs not centering
 - Fix newly-opened GTK windows not tiling correctly
 - Add Mod+left/right keybinds to change focus without the mouse
-- Add DIALOG_RATIO directive in config.h, allow for changes to the size of a dialog on the screen
+- Add `DIALOG_RATIO` directive in config.h, allow for changes to the size of a dialog on the screen
+- Add `-ansi` and `-pedantic` compiler flags, modify code accordingly
+- Add `reset` command in config, fix bars being ignored after reset
+- Add support for pre-mapped windows being tiled
 
 ### v1.1.1
 
@@ -205,6 +208,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
+- Fix signal trapping (by sending dummy events)
 - Fix flickering upon dragging chromium tabs
 - Borders/titlebars?
   - Would not require reparenting, but would require some refactoring

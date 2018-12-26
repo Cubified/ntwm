@@ -1,1 +1,2 @@
-xterm -e gdb ./ntwm
+#xterm -e gdb ./ntwm
+xterm -e tmux

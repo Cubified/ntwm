@@ -13,6 +13,7 @@ static void cycle_windows(node *windows, Window current, int dir);
 static void next_mode();
 static void center_window(Window win);
 static void reset();
+static void tile_existing();
 
 /*
  * Iterates over each monitor,
@@ -159,8 +160,54 @@ void center_window(Window win){
  * a "ghost window"
  */
 void reset(){
-  multihead_free();
-  multihead_setup();
+  list_foreach_noroot(monitors){
+    monitor *m = (monitor*)itr->data;
+    if(m != NULL && m->windows != NULL){
+      list_free(m->windows);
+    }
+    m->windows = list_init();
+  }
+
+  tile_existing();
+}
+
+/*
+ * Queries the root window
+ * for existing windows,
+ * managing them
+ * accordingly
+ */
+void tile_existing(){
+  XMapEvent evt;
+  Window root,
+         parent;
+  Window *children;
+  unsigned int children_count;
+  int n;
+
+  XQueryTree(
+    dpy,
+    DefaultRootWindow(dpy),
+    &root,
+    &parent,
+    &children,
+    &children_count
+  );
+
+  for(n=0;n<children_count;n++){
+    evt.display = dpy;
+    evt.window = children[n];
+    
+    XSendEvent(
+      dpy,
+      root,
+      0,
+      MapRequest,
+      (XEvent*)&evt
+    );
+  }
+
+  free(children);
 }
 
 #endif

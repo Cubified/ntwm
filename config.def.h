@@ -17,8 +17,8 @@ char *autostartcmd = "true";
 typedef struct key {
   unsigned int mod;
   KeySym keysym;
-  const char *func;
-  const char *arg;
+  char *func;
+  char *arg;
 } key;
 
 const key keys[] = {
