@@ -123,30 +123,44 @@ void key_press(XEvent *e){
   for(i=0;i<LENGTH(keys);i++){
     if(keys[i].keysym == keysym &&
       keys[i].mod == ev->state){
-      if(strcmp(keys[i].func,"quit") == 0){
-        quit();
-      } else if(strcmp(keys[i].func,"spawn") == 0){
-        spawn(keys[i].arg);
-      } else if(strcmp(keys[i].func,"kill") == 0){
-        kill_focused();
-      } else if(strcmp(keys[i].func,"gaps") == 0){
-        toggle_gaps(current_monitor);
-      } else if(strcmp(keys[i].func,"full") == 0){
-        toggle_fullscreen(current_monitor,focused);
-      } else if(strcmp(keys[i].func,"next") == 0){
-        cycle_monitors(focused,1);
-      } else if(strcmp(keys[i].func,"prev") == 0){
-        cycle_monitors(focused,0);
-      } else if(strcmp(keys[i].func,"mode") == 0){
-        next_mode();
-      } else if(strcmp(keys[i].func,"nwin") == 0){
-        cycle_windows(current_monitor->windows,focused,1);
-      } else if(strcmp(keys[i].func,"pwin") == 0){
-        cycle_windows(current_monitor->windows,focused,0);
-      } else if(strcmp(keys[i].func,"reset") == 0){
-        reset(map_request);
-      } else {
-        error("Unrecognized command \"%s\" in config.",keys[i].func);
+      int hash = hash_str(keys[i].func);
+      switch(hash){
+        case 259: /* quit */
+          quit();
+          break;
+        case 313: /* spawn */
+          spawn(keys[i].arg);
+          break;
+        case 236: /* kill */
+          kill_focused();
+          break;
+        case 235: /* gaps */
+          toggle_gaps(current_monitor);
+          break;
+        case 243: /* full */
+          toggle_fullscreen(current_monitor, focused);
+          break;
+        case 255: /* next */
+          cycle_monitors(focused, 1);
+          break;
+        case 253: /* prev */
+          cycle_monitors(focused, 0);
+          break;
+        case 229: /* mode */
+          next_mode();
+          break;
+        case 252: /* nwin */
+          cycle_windows(current_monitor->windows, focused, 1);
+          break;
+        case 254: /* pwin */
+          cycle_windows(current_monitor->windows, focused, 0);
+          break;
+        case 307: /* reset */
+          reset(map_request);
+          break;
+        default:
+          error("Unrecognized command \"%s\" in config.", keys[i].func);
+          break;
       }
     }
   }

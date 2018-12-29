@@ -15,13 +15,14 @@ enum {
   atom_check
 };
 
+/* hash_str("_NET_WM_WINDOW_TYPE_X") */
 enum {
-  window_normal,
-  window_dock,
-  window_dialog,
-  window_splash,
-  window_taskbar,
-  window_utility
+  window_normal = 873,
+  window_dock = 801,
+  window_dialog = 848,
+  window_splash = 875,
+  window_taskbar = 888,
+  window_utility = 932
 };
 
 static void init();
@@ -44,6 +45,7 @@ static int closest_odd(int n);
 static int valid_window(Window win);
 static int window_gettype(Window win);
 static int is_child(Window win);
+static int hash_str(char *str);
 
 /*
  * Initialize the connection
@@ -375,18 +377,11 @@ int window_gettype(Window win){
 
   if(success == Success && prop != NULL){
     char *name = XGetAtomName(dpy,*(Atom*)prop);
-    if(strcmp(name,"_NET_WM_WINDOW_TYPE_DOCK") == 0){
-      return window_dock;
-    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_DIALOG") == 0){
-      return window_dialog;
-    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_SPLASH") == 0){
-      return window_splash;
-    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_TASKBAR") == 0){
-      return window_taskbar;
-    } else if(strcmp(name,"_NET_WM_WINDOW_TYPE_UTILITY") == 0){
-      return window_utility;
-    }
+    int hash = hash_str(name);
+
+    return hash_str(name);
   }
+
   return window_normal;
 }
 
@@ -412,5 +407,22 @@ int is_child(Window win){
 
   return (parent != root);
 }
+
+/*
+ * "Hashes" a string to
+ * avoid a strcmp()
+ * if/else ladder
+ */
+int hash_str(char *str){
+  int out = 0;
+  char *c;
+
+  for(c=str;*c;c++){
+    out += *c - '0';
+  }
+
+  return out;
+}
+
 
 #endif
