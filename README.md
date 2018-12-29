@@ -1,6 +1,6 @@
 ![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
 
-# ntwm v1.1.2
+# ntwm v1.2.0
 
 A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
 
@@ -150,6 +150,10 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## Changelog
 
+### v1.2.0
+- Add support for pre-mapped windows being tiled, thereby greatly improving the `reset` command
+- Fix signal trapping, replace blocking `XNextEvent` with non-blocking `XCheckMaskEvent`
+
 ### v1.1.2
 
 - Fix ghost windows (such as in gimp)
@@ -160,7 +164,6 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Add `DIALOG_RATIO` directive in config.h, allow for changes to the size of a dialog on the screen
 - Add `-ansi` and `-pedantic` compiler flags, modify code accordingly
 - Add `reset` command in config, fix bars being ignored after reset
-- Add support for pre-mapped windows being tiled
 
 ### v1.1.1
 
@@ -208,10 +211,8 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
-- Fix signal trapping (by sending dummy events)
+- Decrease binary size with -O3 optimization (23k -> 27k, -Os remains at 19k)
 - Fix flickering upon dragging chromium tabs
-- Borders/titlebars?
-  - Would not require reparenting, but would require some refactoring
 
 ## What Will (Likely) Never be Implemented
 

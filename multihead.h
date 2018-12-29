@@ -24,6 +24,7 @@ static monitor *find_monitor();
 
 static void multihead_addbar(Window win);
 static void multihead_delbar(Window win);
+static int  multihead_isbar(Window win);
 static monitor *monitor_atpos(int x, int y);
 
 #ifdef MULTIHEAD
@@ -269,6 +270,17 @@ void multihead_delbar(Window win){
     }
     list_pop(bars, bar);
   }
+}
+
+/*
+ * Returns 1 if a given
+ * window is a bar (and
+ * therefore should not
+ * be re-mapped with
+ * tile_existing())
+ */
+int multihead_isbar(Window win){
+  return (list_find(bars, NULL, win) != NULL);
 }
 
 /*

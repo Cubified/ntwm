@@ -144,7 +144,7 @@ void key_press(XEvent *e){
       } else if(strcmp(keys[i].func,"pwin") == 0){
         cycle_windows(current_monitor->windows,focused,0);
       } else if(strcmp(keys[i].func,"reset") == 0){
-        reset();
+        reset(map_request);
       } else {
         error("Unrecognized command \"%s\" in config.",keys[i].func);
       }

@@ -12,7 +12,7 @@ static void cycle_monitors(Window win, int dir);
 static void cycle_windows(node *windows, Window current, int dir);
 static void next_mode();
 static void center_window(Window win);
-static void reset();
+static void reset(func map_req);
 static void tile_existing();
 
 /*
@@ -159,7 +159,7 @@ void center_window(Window win){
  * all lists, used to remove
  * a "ghost window"
  */
-void reset(){
+void reset(func map_req){
   list_foreach_noroot(monitors){
     monitor *m = (monitor*)itr->data;
     if(m != NULL && m->windows != NULL){
@@ -168,7 +168,14 @@ void reset(){
     m->windows = list_init();
   }
 
-  tile_existing();
+  /*
+   * map_request() has not
+   * yet been declared by
+   * this point - is such
+   * a practice a hack or
+   * bad habit?
+   */
+  tile_existing(map_req);
 }
 
 /*
@@ -177,8 +184,9 @@ void reset(){
  * managing them
  * accordingly
  */
-void tile_existing(){
-  XMapEvent evt;
+void tile_existing(func map_req){
+  XConfigureRequestEvent evt;
+  XWindowAttributes attr;
   Window root,
          parent;
   Window *children;
@@ -197,17 +205,17 @@ void tile_existing(){
   for(n=0;n<children_count;n++){
     evt.display = dpy;
     evt.window = children[n];
-    
-    XSendEvent(
-      dpy,
-      root,
-      0,
-      MapRequest,
-      (XEvent*)&evt
-    );
+
+    XGetWindowAttributes(dpy, children[n], &attr);
+
+    if(attr.map_state == IsViewable &&
+       !attr.override_redirect &&
+       !multihead_isbar(children[n])){
+      map_req((XEvent*)&evt);
+    }
   }
 
-  free(children);
+  XFree(children);
 }
 
 #endif

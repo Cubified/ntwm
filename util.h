@@ -62,6 +62,13 @@ void init(){
   screen = DefaultScreenOfDisplay(dpy);
   focused = 0;
   bars = list_init();
+  event_mask = SubstructureRedirectMask |
+               SubstructureNotifyMask |
+               MapRequest |
+               ConfigureRequest |
+               UnmapNotify |
+               EnterNotify |
+               KeyPress;
 
   XSetErrorHandler(&on_x_error);
 
@@ -81,13 +88,11 @@ void init(){
 }
 
 /*
- * Quit ntwm (Note: requires
- * a new X event to terminate
- * the event loop, fairly
- * unimportant because this
- * function is only called
- * on SIGINT, SIGTERM, and
- * SIGQUIT
+ * Quits ntwm by simply
+ * flipping the running
+ * boolean, as the
+ * event loop is
+ * non-blocking
  */
 void quit(){
   running = false;
@@ -211,11 +216,7 @@ void set_cursorpos(int x, int y){
 
 /*
  * Quits ntwm on relevant
- * signals, sending a
- * dummy event first
- * to break out of
- * the synchronous
- * loop (TODO)
+ * signals
  */
 void sighandler(int signo){
   quit();

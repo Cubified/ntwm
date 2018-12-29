@@ -26,6 +26,8 @@ bool has_thrown = false;
 
 char *last_call = "";
 
+long event_mask;
+
 int last_err = 0;
 int mode_index = 0;
 int monitor_width;
@@ -57,33 +59,37 @@ int main(){
   if(!last_err && running){
     multihead_setup();
     spawn(autostartcmd);
+    tile_existing(map_request);
   }
-
-  tile_existing();
-  
+ 
   while(running){
-    XNextEvent(dpy, &e);
-    switch(e.type){
-      case MapRequest:
-        map_request(&e);
-        break;
-      case ConfigureRequest:
-        configure_request(&e);
-        break;
-      case UnmapNotify:
-        unmap_notify(&e);
-        break;
-      case EnterNotify:
-        enter_notify(&e);
-        break;
-      case KeyPress:
-        key_press(&e);
-        break;
-      default:
-        if(e.type == rr_event_base + RRScreenChangeNotify){
-          screenchange_notify(&e);
-        }
-        break;
+    if(XCheckMaskEvent(
+        dpy,
+        event_mask,
+        &e
+      )){
+      switch(e.type){
+        case MapRequest:
+          map_request(&e);
+          break;
+        case ConfigureRequest:
+          configure_request(&e);
+          break;
+        case UnmapNotify:
+          unmap_notify(&e);
+          break;
+        case EnterNotify:
+          enter_notify(&e);
+          break;
+        case KeyPress:
+          key_press(&e);
+          break;
+        default:
+          if(e.type == rr_event_base + RRScreenChangeNotify){
+            screenchange_notify(&e);
+          }
+          break;
+      }
     }
   }
 

@@ -2,7 +2,7 @@
  * config.h: ntwm configuration
  */
 
-#define VER "1.1.2"
+#define VER "1.2.0"
 #define GAPS 50
 #define STACK_RATIO 0.3
 #define DIALOG_RATIO 0.7
