@@ -84,12 +84,13 @@ int main(){
         case KeyPress:
           key_press(&e);
           break;
-        default:
-          if(e.type == rr_event_base + RRScreenChangeNotify){
-            screenchange_notify(&e);
-          }
-          break;
       }
+    } else if(XCheckTypedEvent(
+      dpy,
+      rr_event_base + RRScreenChangeNotify,
+      &e
+    )){
+      screenchange_notify(&e);
     }
   }
 
