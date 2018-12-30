@@ -379,8 +379,13 @@ int window_gettype(Window win){
     char *name = XGetAtomName(dpy,*(Atom*)prop);
     int hash = hash_str(name);
 
-    return hash_str(name);
+    free(prop);
+    free(name);
+
+    return hash;
   }
+  
+  free(prop);
 
   return window_normal;
 }
@@ -404,6 +409,8 @@ int is_child(Window win){
     &children,
     &count
   );
+
+  XFree(children);
 
   return (parent != root);
 }

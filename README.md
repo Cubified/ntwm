@@ -212,7 +212,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
-- Decrease binary size with -O3 optimization (23k -> 27k, -Os remains at 19k)
+- Investigate and resolve any remaining memory leaks
 - Fix flickering upon dragging chromium tabs
 
 ## What Will (Likely) Never be Implemented
