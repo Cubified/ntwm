@@ -152,8 +152,10 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ### v1.2.0
 - Add support for pre-mapped windows being tiled, thereby greatly improving the `reset` command
-- Fix signal trapping, replace blocking `XNextEvent` with non-blocking `XCheckMaskEvent`
-- Fix multihead support by explicitly checking for screenchange events (while remaining non-blocking)
+- Fix signal trapping~~, replace blocking `XNextEvent` with non-blocking `XCheckMaskEvent`~~
+- ~~Fix multihead support by explicitly checking for screenchange events (while remaining non-blocking)~~
+- Fix minor memory leaks
+- Fix high CPU usage (ironically caused by use of `XCheckMaskEvent`)
 
 ### v1.1.2
 

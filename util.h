@@ -64,13 +64,6 @@ void init(){
   screen = DefaultScreenOfDisplay(dpy);
   focused = 0;
   bars = list_init();
-  event_mask = SubstructureRedirectMask |
-               SubstructureNotifyMask |
-               MapRequest |
-               ConfigureRequest |
-               UnmapNotify |
-               EnterNotify |
-               KeyPress;
 
   XSetErrorHandler(&on_x_error);
 
@@ -218,10 +211,25 @@ void set_cursorpos(int x, int y){
 
 /*
  * Quits ntwm on relevant
- * signals
+ * signals, sending a
+ * dummy event for
+ * XNextEvent()
  */
 void sighandler(int signo){
+  XEvent evt;
+
   quit();
+
+  evt.type = EnterNotify;
+
+  XSendEvent(
+    dpy,
+    root,
+    False,
+    EnterWindowMask,
+    &evt
+  );
+  XFlush(dpy);
 }
 
 /*
