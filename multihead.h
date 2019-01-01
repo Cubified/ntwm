@@ -86,8 +86,11 @@ void multihead_free(){
       list_free(m->windows);
     }
   }
-  list_free(monitors);
-  list_free(bars);
+  if(monitors != NULL &&
+     bars != NULL){
+    list_free(monitors);
+    list_free(bars);
+  }
 }
 
 /*

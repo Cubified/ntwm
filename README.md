@@ -156,6 +156,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - ~~Fix multihead support by explicitly checking for screenchange events (while remaining non-blocking)~~
 - Fix minor memory leaks
 - Fix high CPU usage (ironically caused by use of `XCheckMaskEvent`)
+- Fix `reset` command
 
 ### v1.1.2
 

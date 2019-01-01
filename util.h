@@ -15,7 +15,10 @@ enum {
   atom_check
 };
 
-/* hash_str("_NET_WM_WINDOW_TYPE_X") */
+/*
+ * hash_str("_NET_WM_WINDOW_TYPE_X")
+ * (Better solutions may exist)
+ */
 enum {
   window_normal = 873,
   window_dock = 801,

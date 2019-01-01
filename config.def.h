@@ -17,23 +17,37 @@ char *autostartcmd = "true";
 typedef struct key {
   unsigned int mod;
   KeySym keysym;
-  char *func;
+  int func;
   char *arg;
 } key;
 
+enum {
+  cmd_quit,
+  cmd_spawn,
+  cmd_kill,
+  cmd_gaps,
+  cmd_full,
+  cmd_next,
+  cmd_prev,
+  cmd_mode,
+  cmd_nwin,
+  cmd_pwin,
+  cmd_reset
+};
+
 const key keys[] = {
-/* Mask         Keysym      Function  Argument */
-  {MASK|SHIFT,  XK_e,       "quit",   NULL},
-  {MASK,        XK_Return,  "spawn",  TERMCMD},
-  {MASK|SHIFT,  XK_q,       "kill",   NULL},
-  {MASK,        XK_f,       "gaps",   NULL},
-  {MASK|SHIFT,  XK_f,       "full",   NULL},
-  {MASK|SHIFT,  XK_Right,   "next",   NULL},
-  {MASK|SHIFT,  XK_Left,    "prev",   NULL},
-  {MASK,        XK_o,       "mode",   NULL},
-  {MASK,        XK_Right,   "nwin",   NULL},
-  {MASK,        XK_Left,    "pwin",   NULL},
-  {MASK,        XK_u,       "reset",  NULL}
+/* Mask         Keysym      Function    Argument */
+  {MASK|SHIFT,  XK_e,       cmd_quit,   NULL},
+  {MASK,        XK_Return,  cmd_spawn,  TERMCMD},
+  {MASK|SHIFT,  XK_q,       cmd_kill,   NULL},
+  {MASK,        XK_f,       cmd_gaps,   NULL},
+  {MASK|SHIFT,  XK_f,       cmd_full,   NULL},
+  {MASK|SHIFT,  XK_Right,   cmd_next,   NULL},
+  {MASK|SHIFT,  XK_Left,    cmd_prev,   NULL},
+  {MASK,        XK_o,       cmd_mode,   NULL},
+  {MASK,        XK_Right,   cmd_nwin,   NULL},
+  {MASK,        XK_Left,    cmd_pwin,   NULL},
+  {MASK,        XK_u,       cmd_reset,  NULL}
 };
 
 typedef void (*func)();

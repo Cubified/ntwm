@@ -154,7 +154,6 @@ void list_pop(node *root, node *elem){
 void list_free(node *root){
   list_foreach_noroot(root){
     if(itr->prev != NULL){
-      free(itr->prev->data);
       free(itr->prev);
     }
   }

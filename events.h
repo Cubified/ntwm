@@ -123,39 +123,38 @@ void key_press(XEvent *e){
   for(i=0;i<LENGTH(keys);i++){
     if(keys[i].keysym == keysym &&
       keys[i].mod == ev->state){
-      int hash = hash_str(keys[i].func);
-      switch(hash){
-        case 259: /* quit */
+      switch(keys[i].func){
+        case cmd_quit:
           quit();
           break;
-        case 313: /* spawn */
+        case cmd_spawn:
           spawn(keys[i].arg);
           break;
-        case 236: /* kill */
+        case cmd_kill:
           kill_focused();
           break;
-        case 235: /* gaps */
+        case cmd_gaps:
           toggle_gaps(current_monitor);
           break;
-        case 243: /* full */
+        case cmd_full:
           toggle_fullscreen(current_monitor, focused);
           break;
-        case 255: /* next */
+        case cmd_next:
           cycle_monitors(focused, 1);
           break;
-        case 253: /* prev */
+        case cmd_prev:
           cycle_monitors(focused, 0);
           break;
-        case 229: /* mode */
+        case cmd_mode:
           next_mode();
           break;
-        case 252: /* nwin */
+        case cmd_nwin:
           cycle_windows(current_monitor->windows, focused, 1);
           break;
-        case 254: /* pwin */
+        case cmd_pwin:
           cycle_windows(current_monitor->windows, focused, 0);
           break;
-        case 307: /* reset */
+        case cmd_reset:
           reset(map_request);
           break;
         default:
