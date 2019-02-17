@@ -88,7 +88,9 @@ void tile_grid(monitor *m){
 
     win = itr->data_noptr;
 
-    if(m->fullscreen_enabled && m->fullscreen == win){
+    if(m->fullscreen_enabled &&
+       m->fullscreen == win &&
+       !above_enabled){
       x = m->x;
       y = m->y;
       w = m->width;
@@ -97,7 +99,7 @@ void tile_grid(monitor *m){
       XRaiseWindow(dpy,win);
     }
 
-    move_resize(
+    x_move_resize(
       win,
       x, y,
       w, h
@@ -203,7 +205,9 @@ void tile_dualstack(monitor *m){
         break;
     }
     
-    if(m->fullscreen_enabled && m->fullscreen == win){
+    if(m->fullscreen_enabled &&
+       m->fullscreen == win &&
+       !above_enabled){
       x = m->x;
       y = m->y;
       width = m->width;
@@ -212,7 +216,7 @@ void tile_dualstack(monitor *m){
       XRaiseWindow(dpy,win);
     }
 
-    move_resize(
+    x_move_resize(
       win,
       x, y,
       width, height
@@ -258,7 +262,9 @@ void tile_fibonacci(monitor *m){
       }
     }
     
-    if(m->fullscreen_enabled && m->fullscreen == itr->data_noptr){
+    if(m->fullscreen_enabled &&
+       m->fullscreen == itr->data_noptr &&
+       !above_enabled){
       x = 0;
       y = 0;
       w = m->width;
@@ -267,7 +273,7 @@ void tile_fibonacci(monitor *m){
       XRaiseWindow(dpy,itr->data_noptr);
     }
 
-    move_resize(
+    x_move_resize(
       itr->data_noptr,
       x + m->x, y + m->y,
       w, h
@@ -308,7 +314,9 @@ void tile_bottomstack(monitor *m){
       h = subcol_height - gaps;
     }
 
-    if(m->fullscreen_enabled && m->fullscreen == itr->data_noptr){
+    if(m->fullscreen_enabled &&
+       m->fullscreen == itr->data_noptr &&
+       !above_enabled){
       x = m->x;
       y = m->y;
       w = m->width;
@@ -317,7 +325,7 @@ void tile_bottomstack(monitor *m){
       XRaiseWindow(dpy,itr->data_noptr);
     }
 
-    move_resize(
+    x_move_resize(
       itr->data_noptr,
       x, y,
       w, h

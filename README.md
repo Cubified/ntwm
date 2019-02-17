@@ -1,6 +1,6 @@
-![ntwm](https://github.com/Cubified/ntwm/blob/master/ntwm.png)
+![ntwm](https://github.com/Cubified/ntwm/blob/master/images/ntwm.png)
 
-# ntwm v1.2.0
+# ntwm v1.2.5
 
 A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
 
@@ -8,7 +8,7 @@ ntwm was written from scratch using Xlib and was inspired by dwm, 2bwm, and othe
 
 ## Screenshot
 
-![screenshot](https://github.com/Cubified/ntwm/blob/master/modes/grid.png)
+![screenshot](https://github.com/Cubified/ntwm/blob/master/images/modes/grid.png)
 
 ---
 
@@ -118,7 +118,7 @@ If your greeter has no option to change the default X session (i.e. _not_ the GT
 
 ## Configuration
 
-All configuration is done through `config.h`, and provided options should be relatively self-explanatory.
+All configuration is done through `config/config.h`, and provided options should be relatively self-explanatory.
 
 ### Autostart
 
@@ -130,19 +130,19 @@ By default, ntwm supports the following tiling modes (with more coming):
 
 - Grid
 
-![grid](https://github.com/Cubified/ntwm/blob/master/modes/grid.png)
+![grid](https://github.com/Cubified/ntwm/blob/master/images/modes/grid.png)
 
 - Dualstack
 
-![dualstack](https://github.com/Cubified/ntwm/blob/master/modes/dualstack.png)
+![dualstack](https://github.com/Cubified/ntwm/blob/master/images/modes/dualstack.png)
 
 - Fibonacci
 
-![fibonacci](https://github.com/Cubified/ntwm/blob/master/modes/fibonacci.png)
+![fibonacci](https://github.com/Cubified/ntwm/blob/master/images/modes/fibonacci.png)
 
 - Bottomstack
 
-![bottomstack](https://github.com/Cubified/ntwm/blob/master/modes/bottomstack.png)
+![bottomstack](https://github.com/Cubified/ntwm/blob/master/images/modes/bottomstack.png)
 
 To edit the order in which these modes are selected, adjust the `modes` variable in `config.h`.
 
@@ -150,9 +150,18 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## Changelog
 
+### v1.2.5
+- Add support for two types of client message (`NET_WM_STATE_ABOVE` and `NET_WM_STATE_FULLSCREEN`) with more to come
+- Add global "above" window which supersedes per-monitor fullscreen
+- Move from -O3 optimization to -Os by default
+- Remove several unused dependencies, add option to compile without `stdio.h`
+- Move all Xlib utility functions into `x.h`
+- Move files into appropriate folders, cleaning up the appearance of the repository
+
 ### v1.2.0
 - Add support for pre-mapped windows being tiled, thereby greatly improving the `reset` command
-- Fix signal trapping~~, replace blocking `XNextEvent` with non-blocking `XCheckMaskEvent`~~
+- Fix signal trapping
+- ~~Replace blocking `XNextEvent` with non-blocking `XCheckMaskEvent`~~
 - ~~Fix multihead support by explicitly checking for screenchange events (while remaining non-blocking)~~
 - Fix minor memory leaks
 - Fix high CPU usage (ironically caused by use of `XCheckMaskEvent`)
@@ -217,6 +226,8 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 - Investigate and resolve any remaining memory leaks
 - Fix flickering upon dragging chromium tabs
+- Fix incongruency between client-toggled and window manager-wide fullscreen
+- Clean up util.h
 
 ## What Will (Likely) Never be Implemented
 

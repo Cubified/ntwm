@@ -16,6 +16,9 @@ typedef struct node {
 
 #define list_foreach(root)        node *itr;for(itr=root;itr!=NULL;itr=itr->next)
 #define list_foreach_noroot(root) node *itr;for(itr=root->next;itr!=NULL;itr=itr->next)
+/*
+ * (For ANSI compliance)
+ */
 #define list_foreach_nodecl(root) for(itr=root;itr!=NULL;itr=itr->next)
 #define list_foreach_noroot_nodecl(root) for(itr=root->next;itr!=NULL;itr=itr->next)
 

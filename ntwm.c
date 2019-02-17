@@ -3,10 +3,6 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdarg.h>
-#include <string.h>
 #include <unistd.h>
 #include <signal.h>
 
@@ -21,8 +17,9 @@
 #include "logging.h"
 #include "list.h"
 
-bool running = true;
-bool has_thrown = false;
+int running = 1;
+int has_thrown = 0;
+int above_enabled = 0;
 
 char *last_call = "";
 
@@ -38,12 +35,14 @@ Screen *screen;
 XEvent e;
 Window focused;
 Window root;
-Atom atoms[5];
+Window above;
+Atom atoms[8];
 
 node *monitors;
 node *bars;
 
 #include "util.h"
+#include "x.h"
 #include "multihead.h"
 #include "modes.h"
 #include "tiling.h"
@@ -52,7 +51,7 @@ node *bars;
 int main(){
   info("ntwm v" VER " starting up.");
 
-  init();
+  x_init();
 
   if(!last_err && running){
     multihead_setup();
@@ -77,6 +76,9 @@ int main(){
         break;
       case KeyPress:
         key_press(&e);
+        break;
+      case ClientMessage:
+        client_message(&e);
         break;
       default:
         if(e.type == rr_event_base + RRScreenChangeNotify){

@@ -10,6 +10,7 @@ static void configure_request(XEvent *e);
 static void unmap_notify(XEvent *e);
 static void key_press(XEvent *e);
 static void enter_notify(XEvent *e);
+static void client_message(XEvent *e);
 static void screenchange_notify(XEvent *e);
 
 /*
@@ -18,25 +19,27 @@ static void screenchange_notify(XEvent *e);
  */
 void map_request(XEvent *e){
   XMapRequestEvent *ev = &e->xmaprequest;
-  int wintype = window_gettype(ev->window);
+  int wintype = x_window_gettype(ev->window);
   
   last_call = "map";
   
-  if((wintype == window_normal || wintype == window_utility) && !is_child(ev->window)){
+  if((wintype == window_normal ||
+      wintype == window_utility) &&
+      !x_is_child(ev->window)){
     node *list = find_monitor()->windows;
 
-    if(list_find(list,NULL,ev->window) == NULL){
+    if(list_find(list, NULL, ev->window) == NULL){
       node *n = list_push(list);
       n->data_noptr = ev->window;
 
       tile();
 
-      select_input(ev->window);
-      establish_keybinds(ev->window);
+      x_select_input(ev->window);
+      x_establish_keybinds(ev->window);
 
-      XMapWindow(dpy,ev->window);
+      XMapWindow(dpy, ev->window);
 
-      set_focused(ev->window);
+      x_set_focused(ev->window);
     }
   } else {
     /*
@@ -44,17 +47,23 @@ void map_request(XEvent *e){
      * or not supported, simply
      * display it
      */
-    XMapWindow(dpy,ev->window);
+    XMapWindow(dpy, ev->window);
   }
+
+  /*
+   * Window with _NET_WM_STATE_ABOVE
+   * set always has precedence
+   */
+  XMapRaised(dpy, above);
   
   if(wintype == window_dock || wintype == window_taskbar){
     multihead_addbar(ev->window);
     tile();
   } else if(wintype == window_dialog){
-    select_input(ev->window);
-    establish_keybinds(ev->window);
+    x_select_input(ev->window);
+    x_establish_keybinds(ev->window);
     center_window(ev->window);
-    set_focused(ev->window);
+    x_set_focused(ev->window);
   }
 }
 
@@ -63,11 +72,11 @@ void map_request(XEvent *e){
  */
 void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
-  int wintype = window_gettype(ev->window);
+  int wintype = x_window_gettype(ev->window);
 
   last_call = "configure";
   if(wintype != window_dialog){
-    move_resize(
+    x_move_resize(
       ev->window,
       ev->x, ev->y,
       ev->width, ev->height
@@ -94,6 +103,11 @@ void unmap_notify(XEvent *e){
     } else {
       focused = 0;
     }
+  }
+  
+  if(above == ev->window){
+    above_enabled = 0;
+    above = 0;
   }
 
   if(elem != NULL){
@@ -131,7 +145,7 @@ void key_press(XEvent *e){
           spawn(keys[i].arg);
           break;
         case cmd_kill:
-          kill_focused();
+          x_kill_focused();
           break;
         case cmd_gaps:
           toggle_gaps(current_monitor);
@@ -175,7 +189,31 @@ void enter_notify(XEvent *e){
   XCrossingEvent *ev = &e->xcrossing;
   last_call = "enter";
 
-  set_focused(ev->window);
+  x_set_focused(ev->window);
+}
+
+/*
+ * Handles a specific subset of
+ * client message events
+ * (incomplete for now)
+ */
+void client_message(XEvent *e){
+  XClientMessageEvent *ev = &e->xclient;
+
+  if(ev->message_type == atoms[atom_state]){
+    if(ev->data.l[1] == atoms[atom_above] ||
+       ev->data.l[2] == atoms[atom_above]){
+      x_set_property(atoms[atom_above], XA_WINDOW, 32, (unsigned char*)&ev->window);
+      toggle_above(ev->window);
+    } else if(ev->data.l[1] == atoms[atom_fullscreen] ||
+              ev->data.l[2] == atoms[atom_fullscreen]){
+      int x, y;
+      unsigned int w, h;
+      x_set_property(atoms[atom_fullscreen], XA_WINDOW, 32, (unsigned char*)&ev->window);
+      x_query_window(ev->window, &x, &y, &w, &h);
+      toggle_fullscreen(monitor_atpos(x, y), ev->window);
+    }
+  }
 }
 
 /*

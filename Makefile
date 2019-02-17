@@ -2,10 +2,10 @@ all: config.h ntwm
 
 CC=gcc
 
-CFLAGS=
+CFLAGS=-Iinclude -Iconfig
 LIBS=-lX11 -lXrandr
 
-FLAGS=-O3 -pipe -s -ansi -pedantic
+FLAGS=-Os -pipe -s -ansi -pedantic
 DEBUGFLAGS=-Og -Wall -pipe -g -ansi -pedantic
 
 SOURCES=ntwm.c
@@ -30,7 +30,7 @@ uninstall:
 	$(RM) $(INSTALLDIR)/$(OUT)
 
 config.h:
-	if [ ! -e "config.h" ]; then $(CP) "config.def.h" "config.h"; fi
+	if [ ! -e "config/config.h" ]; then $(CP) "config/config.def.h" "config/config.h"; fi
 
 clean:
 	if [ -e "$(OUT)" ]; then $(RM) $(OUT); fi

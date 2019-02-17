@@ -12,8 +12,8 @@ typedef struct monitor {
   int x;
   int y;
   int mode;
-  bool gaps_enabled;
-  bool fullscreen_enabled;
+  int gaps_enabled;
+  int fullscreen_enabled;
   Window fullscreen;
 } monitor;
 
@@ -35,12 +35,12 @@ static monitor *monitor_atpos(int x, int y);
  */
 void multihead_setup(){
   int i;
-  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
+  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy, root);
 
   monitors = list_init();
  
   for(i=0;i<screen_resources->ncrtc;i++){
-    XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy,screen_resources,screen_resources->crtcs[i]);
+    XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy, screen_resources, screen_resources->crtcs[i]);
 
     if(crtc_info->width > 0){
       monitor *mon = malloc(sizeof(monitor));
@@ -52,8 +52,8 @@ void multihead_setup(){
       mon->x = crtc_info->x;
       mon->y = crtc_info->y;
       mon->mode = 0;
-      mon->gaps_enabled = true;
-      mon->fullscreen_enabled = false;
+      mon->gaps_enabled = 1;
+      mon->fullscreen_enabled = 0;
       mon->fullscreen = 0;
 
       n->data = mon;
@@ -61,10 +61,10 @@ void multihead_setup(){
 
     XRRFreeCrtcInfo(crtc_info);
   }
-  XSync(dpy,false);
+  XSync(dpy, 0);
   XRRFreeScreenResources(screen_resources);
 
-  XRRQueryExtension(dpy,&rr_event_base,&rr_error_base);
+  XRRQueryExtension(dpy, &rr_event_base, &rr_error_base);
   
   XRRSelectInput(
     dpy,
@@ -99,13 +99,13 @@ void multihead_free(){
  * multihead_setup()
  */
 void multihead_resize(){
-  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy,root);
+  XRRScreenResources *screen_resources = XRRGetScreenResources(dpy, root);
   XRRCrtcInfo *crtc_info;
   monitor *m;
   int i = 0;
   list_foreach_noroot(monitors){
     m = itr->data;
-    crtc_info = XRRGetCrtcInfo(dpy,screen_resources,screen_resources->crtcs[i]);
+    crtc_info = XRRGetCrtcInfo(dpy, screen_resources, screen_resources->crtcs[i]);
     m->width = crtc_info->width;
     m->height = crtc_info->height;
     m->x = crtc_info->x;
@@ -135,7 +135,7 @@ monitor *find_monitor(){
     &mask_return
   );
 
-  return monitor_atpos(pos_x,pos_y);
+  return monitor_atpos(pos_x, pos_y);
 }
 
 #endif
@@ -157,8 +157,8 @@ void multihead_setup(){
   monitor->x = 0;
   monitor->y = 0;
   monitor->mode = 0;
-  monitor->gaps_enabled = true;
-  monitor->fullscreen_enabled = false;
+  monitor->gaps_enabled = 1;
+  monitor->fullscreen_enabled = 0;
   monitor->fullscreen = 0;
   rr_event_base = -1;
   rr_error_base = -1;
@@ -232,7 +232,7 @@ void multihead_addbar(Window win){
     &depth
   ); 
 
-  m = monitor_atpos(x,y);
+  m = monitor_atpos(x, y);
 
   newbar = list_push(bars);
   newbar->data = malloc(sizeof(int));

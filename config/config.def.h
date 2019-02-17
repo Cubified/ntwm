@@ -2,11 +2,12 @@
  * config.h: ntwm configuration
  */
 
-#define VER "1.2.0"
+#define VER "1.2.5"
 #define GAPS 50
 #define STACK_RATIO 0.3
 #define DIALOG_RATIO 0.7
 #define MULTIHEAD /* multimonitor support */
+#define LOGGING /* startup/shutdown logging */
 #define MASK Mod1Mask
 #define SHIFT ShiftMask
 

@@ -8,12 +8,13 @@
 static void tile();
 static void toggle_gaps(monitor *current_monitor);
 static void toggle_fullscreen(monitor *current_monitor, Window win);
+static void toggle_above(Window win);
 static void cycle_monitors(Window win, int dir);
 static void cycle_windows(node *windows, Window current, int dir);
 static void next_mode();
 static void center_window(Window win);
 static void reset(func map_req);
-static void tile_existing();
+static void tile_existing(func map_req);
 
 /*
  * Iterates over each monitor,
@@ -24,6 +25,12 @@ void tile(){
   monitor *m;
   list_foreach_noroot(monitors){
     m = itr->data;
+
+    if(above_enabled && m->fullscreen_enabled){
+      m->fullscreen_enabled = 2;
+    } else if(!above_enabled && m->fullscreen_enabled == 2){
+      m->fullscreen_enabled = 1;
+    }
     
     modes[m->mode](m);
   }
@@ -49,11 +56,24 @@ void toggle_fullscreen(monitor *current_monitor, Window win){
 }
 
 /*
+ * Toggles a window as above all others,
+ * taking precedence over fullscreen as
+ * this is a mode explicitly requested
+ * by client windows (as per EWMH)
+ */
+void toggle_above(Window win){
+  above_enabled = !above_enabled;
+  if(above_enabled){
+    above = win;
+  }
+}
+
+/*
  * Moves a window to either the previous
  * or next available monitor
  */
 void cycle_monitors(Window win, int dir){
-  if(valid_window(focused)){
+  if(x_valid_window(focused)){
     monitor *current_mon = monitors->next->data,
             *next_mon = monitors->next->data;
     node *elem = current_mon->windows->next,
@@ -83,7 +103,7 @@ void cycle_monitors(Window win, int dir){
       new_elem = list_push(next_mon->windows);
       new_elem->data_noptr = win;
 
-      set_cursorpos(
+      x_set_cursorpos(
         next_mon->x + (next_mon->width / 2),
         next_mon->y + (next_mon->height / 2)
       );
@@ -110,16 +130,16 @@ void cycle_windows(node *windows, Window current, int dir){
     switch(dir){
       case 0:
         if(elem->prev == windows){
-          set_focused(windows->end->data_noptr);
+          x_set_focused(windows->end->data_noptr);
         } else {
-          set_focused(elem->prev->data_noptr);
+          x_set_focused(elem->prev->data_noptr);
         }
         break;
       case 1:
         if(elem->next == NULL){
-          set_focused(windows->next->data_noptr);
+          x_set_focused(windows->next->data_noptr);
         } else {
-          set_focused(elem->next->data_noptr);
+          x_set_focused(elem->next->data_noptr);
         }
         break;
     }
@@ -145,7 +165,7 @@ void next_mode(){
 void center_window(Window win){
   monitor *m = find_monitor();
   int gaps = (m->gaps_enabled ? GAPS : 0);
-  move_resize(
+  x_move_resize(
     win,
     (m->x + gaps) + ((m->width  - (m->width  * DIALOG_RATIO)) / 2),
     (m->y + gaps) + ((m->height - (m->height * DIALOG_RATIO)) / 2),
