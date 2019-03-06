@@ -63,6 +63,7 @@ void x_init(){
   root = DefaultRootWindow(dpy);
   screen = DefaultScreenOfDisplay(dpy);
   focused = 0;
+  above = 0;
   bars = list_init();
 
   XSetErrorHandler(&on_x_error);

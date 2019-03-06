@@ -54,7 +54,10 @@ void map_request(XEvent *e){
    * Window with _NET_WM_STATE_ABOVE
    * set always has precedence
    */
-  XMapRaised(dpy, above);
+  if(above_enabled &&
+     above != 0){
+    XMapRaised(dpy, above);
+  }
   
   if(wintype == window_dock || wintype == window_taskbar){
     multihead_addbar(ev->window);

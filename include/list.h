@@ -155,12 +155,19 @@ void list_pop(node *root, node *elem){
  * Frees an entire list
  */
 void list_free(node *root){
+  /*
   list_foreach_noroot(root){
     if(itr->prev != NULL){
       free(itr->prev);
     }
   }
-  free(itr);
+  free(itr);*/
+
+  list_foreach_reverse(root){
+    if(itr->next != NULL){
+      free(itr->next);
+    }
+  }
 }
 
 /*

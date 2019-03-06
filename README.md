@@ -157,6 +157,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Remove several unused dependencies, add option to compile without `stdio.h`
 - Move all Xlib utility functions into `x.h`
 - Move files into appropriate folders, cleaning up the appearance of the repository
+- Add `above_enabled` check to avoid X error
 
 ### v1.2.0
 - Add support for pre-mapped windows being tiled, thereby greatly improving the `reset` command
@@ -227,7 +228,6 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Investigate and resolve any remaining memory leaks
 - Fix flickering upon dragging chromium tabs
 - Fix incongruency between client-toggled and window manager-wide fullscreen
-- Clean up util.h
 
 ## What Will (Likely) Never be Implemented
 

@@ -111,7 +111,9 @@ void multihead_resize(){
     m->x = crtc_info->x;
     m->y = crtc_info->y;
     i++;
+    XRRFreeCrtcInfo(crtc_info);
   }
+  XRRFreeScreenResources(screen_resources);
 }
 
 /*
