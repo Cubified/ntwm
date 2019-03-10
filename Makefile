@@ -2,10 +2,10 @@ all: config.h ntwm
 
 CC=gcc
 
-CFLAGS=-Iinclude -Iconfig
+CFLAGS=-Iinclude -Iconfig -Wno-pointer-to-int-cast
 LIBS=-lX11 -lXrandr
 
-FLAGS=-Os -pipe -s -ansi -pedantic
+FLAGS=-Os -s -pipe -ansi -pedantic
 DEBUGFLAGS=-Og -Wall -pipe -g -ansi -pedantic
 
 SOURCES=ntwm.c

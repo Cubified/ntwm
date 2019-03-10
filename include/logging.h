@@ -5,10 +5,12 @@
 #ifndef __LOGGING_H
 #define __LOGGING_H
 
-#ifdef LOGGING
+#ifndef LOGGING_NO_STDIO
 #include <stdio.h>
 #include <stdarg.h>
 #endif
+
+#define STDOUT 1
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -18,12 +20,31 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-static void info(const char *str, ...);
-static void error(const char *str, ...);
-static void debug(const char *str, ...);
+static int  len(char *str);
+static void print(char *str);
+static void info(char *str, ...);
+static void error(char *str, ...);
+static void debug(char *str, ...);
 
-void info(const char *str, ...){
-#ifdef LOGGING
+int len(char *str){
+  int o;
+  char *c;
+  for(c=str,o=0;*c;c++,o++){}
+  return o;
+}
+
+void print(char *str){
+  write(STDOUT, str, len(str));
+}
+
+/***/
+
+void info(char *str, ...){
+#ifdef LOGGING_NO_STDIO
+  print(ANSI_COLOR_CYAN "=> ");
+  print(str);
+  print(ANSI_COLOR_RESET "\n");
+#else
   va_list args;
 
   va_start(args,str);
@@ -34,8 +55,12 @@ void info(const char *str, ...){
 #endif
 }
 
-void error(const char *str, ...){
-#ifdef LOGGING
+void error(char *str, ...){
+#ifdef LOGGING_NO_STDIO
+  print(ANSI_COLOR_RED "==> Error: ");
+  print(str);
+  print(ANSI_COLOR_RESET "\n");
+#else
   va_list args;
 
   va_start(args,str);
@@ -46,8 +71,12 @@ void error(const char *str, ...){
 #endif
 }
 
-void debug(const char *str, ...){
-#ifdef LOGGING
+void debug(char *str, ...){
+#ifdef LOGGING_NO_STDIO
+  print(ANSI_COLOR_GREEN "=> Debug: ");
+  print(str);
+  print(ANSI_COLOR_RESET "\n");
+#else
   va_list args;
 
   va_start(args,str);

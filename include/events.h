@@ -26,11 +26,10 @@ void map_request(XEvent *e){
   if((wintype == window_normal ||
       wintype == window_utility) &&
       !x_is_child(ev->window)){
-    node *list = find_monitor()->windows;
+    pool *list = find_monitor()->windows;
 
-    if(list_find(list, NULL, ev->window) == NULL){
-      node *n = list_push(list);
-      n->data_noptr = ev->window;
+    if(pool_find((void*)ev->window, list) == -1){
+      pool_push((void*)ev->window, list);
 
       tile();
 
@@ -95,14 +94,14 @@ void configure_request(XEvent *e){
  */
 void unmap_notify(XEvent *e){
   XUnmapEvent *ev = &e->xunmap;
-  node *list = find_monitor()->windows;
-  node *elem = list_find(list,NULL,ev->window);
+  pool *list = find_monitor()->windows;
+  int ind = pool_find((void*)ev->window, list);
 
   last_call = "unmap";
 
   if(focused == ev->window){
-    if(list->size > 1){
-      cycle_windows(list,focused,0);
+    if((unsigned int)~list->avail > 0){
+      cycle_windows(list, focused, 0);
     } else {
       focused = 0;
     }
@@ -113,16 +112,16 @@ void unmap_notify(XEvent *e){
     above = 0;
   }
 
-  if(elem != NULL){
-    list_pop(list,elem);
-    tile();
+  if(ind > -1){
+    pool_pop(ind, list);
   } else {
-    node *bar = list_find(bars,NULL,ev->window);
-    if(bar != NULL){
-      multihead_delbar(bar->data_noptr);
-      tile();
+    int p;
+    if((p = pool_find((void*)ev->window, bars)) > -1){
+      multihead_delbar(p);
     }
   }
+
+  tile();
 }
 
 /*
@@ -157,10 +156,10 @@ void key_press(XEvent *e){
           toggle_fullscreen(current_monitor, focused);
           break;
         case cmd_next:
-          cycle_monitors(focused, 1);
+          cycle_monitors(focused, DIR_RIGHT);
           break;
         case cmd_prev:
-          cycle_monitors(focused, 0);
+          cycle_monitors(focused, DIR_LEFT);
           break;
         case cmd_mode:
           next_mode();
@@ -175,7 +174,11 @@ void key_press(XEvent *e){
           reset(map_request);
           break;
         default:
+#ifdef LOGGING_NO_STDIO
+          error("Unrecognized command in config.");
+#else
           error("Unrecognized command \"%s\" in config.", keys[i].func);
+#endif
           break;
       }
     }

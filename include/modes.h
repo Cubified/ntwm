@@ -36,6 +36,8 @@
  * example of this).
  */
 
+#ifdef ENABLE_GRID
+
 /*
  *  ___________
  * |  M  |  2  |
@@ -50,12 +52,12 @@ void tile_grid(monitor *m){
     col_number, row_number,
     x, y,
     w, h,
-    gaps;
+    gaps,
+    ind;
   Window win;
-  node *list = m->windows;
-  node *itr;
-
-  clients_count = list_sizeof(list);
+  pool *list = m->windows;
+  
+  clients_count = pool_count(list);
   if(clients_count == 0){
     return;
   }
@@ -76,7 +78,7 @@ void tile_grid(monitor *m){
   row_number = 0;
   i = 0;
 
-  list_foreach_noroot_nodecl(list){
+  pool_foreach_nodecl(list){
     if(i / rows + 1 > cols - clients_count % cols){
       rows = clients_count / cols + 1;
     }
@@ -86,7 +88,7 @@ void tile_grid(monitor *m){
     w = col_width - gaps;
     h = (col_height / rows) - gaps;
 
-    win = itr->data_noptr;
+    win = (Window)pool_get(ind, list);
 
     if(m->fullscreen_enabled &&
        m->fullscreen == win &&
@@ -96,7 +98,7 @@ void tile_grid(monitor *m){
       w = m->width;
       h = m->height;
 
-      XRaiseWindow(dpy,win);
+      XRaiseWindow(dpy, win);
     }
 
     x_move_resize(
@@ -113,6 +115,10 @@ void tile_grid(monitor *m){
   }
 }
 
+#endif
+
+#ifdef ENABLE_DUALSTACK
+
 /*
  *  ___________
  * | 2|     | 1|
@@ -121,8 +127,8 @@ void tile_grid(monitor *m){
  * |__|_____|__|
  */
 void tile_dualstack(monitor *m){
-  node *list = m->windows;
-  int len = list_sizeof(list); 
+  pool *list = m->windows;
+  int len = pool_count(list);
 
   int gaps = (m->gaps_enabled ? GAPS : 0);
   int cols = (len >= 3 ? 3 : len);
@@ -161,14 +167,14 @@ void tile_dualstack(monitor *m){
 
   Window win;
 
-  node *itr;
+  int ind;
 
   if(len == 0){
     return;
   }
 
-  list_foreach_noroot_nodecl(list){
-    win = itr->data_noptr;
+  pool_foreach_nodecl(list){
+    win = (Window)pool_get(ind, list);
 
     switch(current_col){
       case 0:
@@ -189,7 +195,7 @@ void tile_dualstack(monitor *m){
             break;
         }
         break;
-      case 1:
+      case 1: /* This is really horrible */
         x = m->x + (m->width - subcol_width);
         y = m->y + (subcol_height_right * (current_row_right)) + (current_row_right > 0 ? 0 : gaps);
         width = subcol_width - gaps;
@@ -213,7 +219,7 @@ void tile_dualstack(monitor *m){
       width = m->width;
       height = m->height;
 
-      XRaiseWindow(dpy,win);
+      XRaiseWindow(dpy, win);
     }
 
     x_move_resize(
@@ -230,6 +236,10 @@ void tile_dualstack(monitor *m){
   }
 }
 
+#endif
+
+#ifdef ENABLE_FIBONACCI
+
 /*
  *  ___________
  * |     |  1  |
@@ -241,13 +251,16 @@ void tile_dualstack(monitor *m){
 void tile_fibonacci(monitor *m){
   int gaps = (m->gaps_enabled ? GAPS : 0);
 
-  int ind = 0,
-      x = gaps,
+  int x = gaps,
       y = gaps,
       w = m->width - 2 * gaps,
       h = m->height - 2 * gaps;
 
-  list_foreach_noroot(m->windows){
+  Window win;
+
+  pool_foreach(m->windows){
+    win = (Window)pool_get(ind, m->windows);
+
     if(ind % 2){
       h = h / 2 - gaps / 2;
     } else {
@@ -263,25 +276,27 @@ void tile_fibonacci(monitor *m){
     }
     
     if(m->fullscreen_enabled &&
-       m->fullscreen == itr->data_noptr &&
+       m->fullscreen == win &&
        !above_enabled){
       x = 0;
       y = 0;
       w = m->width;
       h = m->height;
 
-      XRaiseWindow(dpy,itr->data_noptr);
+      XRaiseWindow(dpy, win);
     }
 
     x_move_resize(
-      itr->data_noptr,
+      win,
       x + m->x, y + m->y,
       w, h
     );
-
-    ind++;
   }
 }
+
+#endif
+
+#ifdef TILE_BOTTOMSTACK
 
 /*
  *  ----------- 
@@ -292,16 +307,22 @@ void tile_fibonacci(monitor *m){
  * |___________|
  */
 void tile_bottomstack(monitor *m){
+  pool *list = m->windows;
+
   int x, y,
       w, h;
 
   int gaps = (m->gaps_enabled ? GAPS : 0),
       indx = 0;
 
-  int subcol_height = (m->windows->size > 1 ? m->height * STACK_RATIO : 0);
-  int subcol_width  = (m->windows->size > 1 ? m->width / (m->windows->size - 1) : 0);
+  int subcol_height = (pool_count(list) > 0 ? m->height * STACK_RATIO : 0);
+  int subcol_width  = (pool_count(list) > 0 ? m->width / (pool_count(list) - 1) : 0);
 
-  list_foreach_noroot(m->windows){
+  Window win;
+
+  pool_foreach(list){
+    win = (Window)pool_get(ind, list);
+
     if(indx == 0){
       x = m->x + gaps;
       y = m->y + gaps;
@@ -315,18 +336,18 @@ void tile_bottomstack(monitor *m){
     }
 
     if(m->fullscreen_enabled &&
-       m->fullscreen == itr->data_noptr &&
+       m->fullscreen == win &&
        !above_enabled){
       x = m->x;
       y = m->y;
       w = m->width;
       h = m->height;
 
-      XRaiseWindow(dpy,itr->data_noptr);
+      XRaiseWindow(dpy, win);
     }
 
     x_move_resize(
-      itr->data_noptr,
+      win,
       x, y,
       w, h
     );
@@ -334,5 +355,7 @@ void tile_bottomstack(monitor *m){
     indx++;
   }
 }
+
+#endif
 
 #endif

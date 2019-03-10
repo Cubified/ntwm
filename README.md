@@ -1,6 +1,6 @@
 ![ntwm](https://github.com/Cubified/ntwm/blob/master/images/ntwm.png)
 
-# ntwm v1.2.5
+# ntwm v1.2.6
 
 A tiny, frameless, keyboard-driven tiling window manager with multimonitor support.
 
@@ -18,8 +18,8 @@ All of the following window managers have multimonitor support.
 
 | ntwm | 19kb  |
 |------|-------|
-| dwm  | 33kb  |
 | 2bwm | 36kb  |
+| dwm  | 46kb  |
 | i3   | 343kb |
 
 *(Note: these values are approximate and may be subject to change)*
@@ -146,9 +146,32 @@ By default, ntwm supports the following tiling modes (with more coming):
 
 To edit the order in which these modes are selected, adjust the `modes` variable in `config.h`.
 
+However, if you'd like to shrink the size of the output binary, you may remove support for additional modes by removing the corresponding `ENABLE_*` preprocessor definition.
+
+### Logging
+
+To further decrease filesize, ntwm supports compilation without `stdio.h`, resulting in a save of approximately 4kb.  To enable this, define `LOGGING_NO_STDIO` in `config.h`.
+
+### Memory Usage
+
+With v1.2.6, ntwm now supports user-configurable memory usage through the `MAX_MONITORS`, `MAX_WINDOWS`, and `MAX_BARS` directives - ensuring ntwm will use exactly the amount of memory required to hold the given amounts of each.
+
+Tune these to your system, but ensure they are not overly constraining - exceeding them will invoke unwanted behavior.
+
+### Towards an Even Smaller Binary
+
+In no particular order:
+- Run [sstrip](http://www.muppetlabs.com/~breadbox/software/elfkickers.html) (19kb -> 17kb)
+- Compile with [musl](https://www.musl-libc.org) or [dietlibc](https://www.fefe.de/dietlibc) (requires Xlib and any other userland X applications to be compiled from source)
+- Compile a 32-bit binary (requires 32-bit Xlib)
+
 ---
 
 ## Changelog
+
+### v1.2.6
+- Replace linked list implementation with `libspool.h`, increasing filesize but treating memory more responsibly and executing more quickly
+- Allow for the disabling of certain tiling modes, decreasing filesize
 
 ### v1.2.5
 - Add support for two types of client message (`NET_WM_STATE_ABOVE` and `NET_WM_STATE_FULLSCREEN`) with more to come
@@ -158,6 +181,7 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 - Move all Xlib utility functions into `x.h`
 - Move files into appropriate folders, cleaning up the appearance of the repository
 - Add `above_enabled` check to avoid X error
+- Add support for logging without `stdio.h` (error messages are somewhat less specific, but still useful)
 
 ### v1.2.0
 - Add support for pre-mapped windows being tiled, thereby greatly improving the `reset` command
@@ -225,8 +249,8 @@ To edit the order in which these modes are selected, adjust the `modes` variable
 
 ## To-Do
 
-- Investigate and resolve any remaining memory leaks
-- Fix flickering upon dragging chromium tabs
+- Clean up tiling functionality
+- Fix support for dual bars
 - Fix incongruency between client-toggled and window manager-wide fullscreen
 
 ## What Will (Likely) Never be Implemented

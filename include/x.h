@@ -64,7 +64,7 @@ void x_init(){
   screen = DefaultScreenOfDisplay(dpy);
   focused = 0;
   above = 0;
-  bars = list_init();
+  bars = pool_init(MAX_BARS);
 
   XSetErrorHandler(&on_x_error);
 
@@ -122,7 +122,7 @@ void x_kill_focused(){
   if(x_valid_window(focused)){
     int success = x_send_event(focused, atoms[atom_delete]);
     
-    XUnmapWindow(dpy,focused);
+    XUnmapWindow(dpy, focused);
 
     if(!success){
       XGrabServer(dpy);
@@ -263,13 +263,14 @@ void x_query_window(Window win, int *x, int *y, unsigned int *w, unsigned int *h
  * to a given window
  */
 int x_send_event(Window win, Atom atom){
-  int protocols_count;
+  int protocols_count = 0,
+      exists = 0;
   Atom *protocols;
   XEvent evt;
 
-  int exists = 0;
-
   XGetWMProtocols(dpy, win, &protocols, &protocols_count);
+
+  protocols_count--;
 
   while(!exists){
     exists = (protocols[protocols_count] == atom);
@@ -304,7 +305,11 @@ int on_x_error(Display *dpy, XErrorEvent *e){
       quit();
     }
   } else {
+#ifdef LOGGING_NO_STDIO
+    error(last_call);
+#else
     error("%s (error code %i)", last_call, e->error_code);
+#endif
   }
   last_err = e->error_code;
   return 0;

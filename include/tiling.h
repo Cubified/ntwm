@@ -10,7 +10,7 @@ static void toggle_gaps(monitor *current_monitor);
 static void toggle_fullscreen(monitor *current_monitor, Window win);
 static void toggle_above(Window win);
 static void cycle_monitors(Window win, int dir);
-static void cycle_windows(node *windows, Window current, int dir);
+static void cycle_windows(pool *windows, Window current, int dir);
 static void next_mode();
 static void center_window(Window win);
 static void reset(func map_req);
@@ -23,8 +23,8 @@ static void tile_existing(func map_req);
  */
 void tile(){
   monitor *m;
-  list_foreach_noroot(monitors){
-    m = itr->data;
+  pool_foreach(monitors){
+    m = pool_get(ind, monitors);
 
     if(above_enabled && m->fullscreen_enabled){
       m->fullscreen_enabled = 2;
@@ -73,39 +73,27 @@ void toggle_above(Window win){
  * or next available monitor
  */
 void cycle_monitors(Window win, int dir){
-  if(x_valid_window(focused)){
-    monitor *current_mon = monitors->next->data,
-            *next_mon = monitors->next->data;
-    node *elem = current_mon->windows->next,
-         *new_elem,
-         *itr;
-    for(
-      itr=(dir ? monitors->next : monitors->end);
-      itr!=NULL;
-      itr=(dir ? itr->next : itr->prev)
-    ){
-      current_mon = itr->data;
-      elem = list_find(current_mon->windows,NULL,win);
-      if(elem != NULL && elem->data_noptr == win){
-        if(itr->next != NULL){
-          next_mon = itr->next->data;
-        } else {
-          next_mon = monitors->next->data;
-        }
+  if(x_valid_window(win)){
+    int v = -1,
+        p = 0;
+    monitor *m = pool_get(0, monitors);
+    pool_foreach(monitors){
+      m = pool_get(ind, monitors);
+      if((p = pool_find((void*)win, m->windows)) > -1){
         break;
       }
     }
-    if(current_mon != NULL &&
-       next_mon != NULL &&
-       elem != NULL){
-      list_pop(current_mon->windows,elem);
 
-      new_elem = list_push(next_mon->windows);
-      new_elem->data_noptr = win;
+    v = pool_adj(p, dir, monitors);
+    if(v != -1){
+      pool_pop(p, m->windows);
+
+      m = pool_get(v, monitors);
+      pool_push((void*)win, m->windows);
 
       x_set_cursorpos(
-        next_mon->x + (next_mon->width / 2),
-        next_mon->y + (next_mon->height / 2)
+        m->x + (m->width / 2),
+        m->y + (m->height / 2)
       );
 
       tile();
@@ -117,31 +105,13 @@ void cycle_monitors(Window win, int dir){
  * Focuses the previous/next window
  * in a monitor's list
  */
-void cycle_windows(node *windows, Window current, int dir){
-  node *elem = NULL;
-  list_foreach_noroot(windows){
-    if(itr->data_noptr == current){
-      elem = itr;
-      break;
-    }
-  }
-
-  if(elem != NULL){
-    switch(dir){
-      case 0:
-        if(elem->prev == windows){
-          x_set_focused(windows->end->data_noptr);
-        } else {
-          x_set_focused(elem->prev->data_noptr);
-        }
-        break;
-      case 1:
-        if(elem->next == NULL){
-          x_set_focused(windows->next->data_noptr);
-        } else {
-          x_set_focused(elem->next->data_noptr);
-        }
-        break;
+void cycle_windows(pool *windows, Window current, int dir){
+  int v = -1,
+      ind = pool_find((void*)current, windows);
+  if(ind != -1){
+    v = pool_adj(ind, dir, windows);
+    if(v != -1){
+      x_set_focused((Window)pool_get(v, windows));
     }
   }
 }
@@ -180,12 +150,12 @@ void center_window(Window win){
  * a "ghost window"
  */
 void reset(func map_req){
-  list_foreach_noroot(monitors){
-    monitor *m = (monitor*)itr->data;
+  pool_foreach(monitors){
+    monitor *m = pool_get(ind, monitors);
     if(m != NULL && m->windows != NULL){
-      list_free(m->windows);
+      pool_free(m->windows);
     }
-    m->windows = list_init();
+    m->windows = pool_init(MAX_WINDOWS);
   }
 
   /*

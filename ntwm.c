@@ -15,7 +15,7 @@
 
 #include "config.h"
 #include "logging.h"
-#include "list.h"
+#include "libspool.h"
 
 int running = 1;
 int has_thrown = 0;
@@ -38,8 +38,8 @@ Window root;
 Window above;
 Atom atoms[8];
 
-node *monitors;
-node *bars;
+pool *monitors;
+pool *bars;
 
 #include "util.h"
 #include "x.h"

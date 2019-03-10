@@ -6,7 +6,7 @@
 #define __MULTIHEAD_H
 
 typedef struct monitor {
-  node *windows;
+  pool *windows;
   int width;
   int height;
   int x;
@@ -23,7 +23,7 @@ static void multihead_resize();
 static monitor *find_monitor();
 
 static void multihead_addbar(Window win);
-static void multihead_delbar(Window win);
+static void multihead_delbar(int pos);
 static int  multihead_isbar(Window win);
 static monitor *monitor_atpos(int x, int y);
 
@@ -37,16 +37,15 @@ void multihead_setup(){
   int i;
   XRRScreenResources *screen_resources = XRRGetScreenResources(dpy, root);
 
-  monitors = list_init();
+  monitors = pool_init(MAX_MONITORS);
  
   for(i=0;i<screen_resources->ncrtc;i++){
     XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(dpy, screen_resources, screen_resources->crtcs[i]);
 
     if(crtc_info->width > 0){
       monitor *mon = malloc(sizeof(monitor));
-      node *n = list_push(monitors);
 
-      mon->windows = list_init();
+      mon->windows = pool_init(MAX_WINDOWS);
       mon->width = crtc_info->width;
       mon->height = crtc_info->height;
       mon->x = crtc_info->x;
@@ -56,7 +55,7 @@ void multihead_setup(){
       mon->fullscreen_enabled = 0;
       mon->fullscreen = 0;
 
-      n->data = mon;
+      pool_push(mon, monitors);
     }
 
     XRRFreeCrtcInfo(crtc_info);
@@ -80,16 +79,17 @@ void multihead_setup(){
  * monitor struct
  */
 void multihead_free(){
-  list_foreach(monitors){
-    monitor *m = (monitor*)itr->data;
-    if(m != NULL && m->windows != NULL){
-      list_free(m->windows);
-    }
-  }
   if(monitors != NULL &&
      bars != NULL){
-    list_free(monitors);
-    list_free(bars);
+    pool_foreach(monitors){
+      monitor *m = pool_get(ind, monitors);
+      if(m != NULL && m->windows != NULL){
+        pool_free(m->windows);
+      }
+      free(m);
+    }
+    pool_free(monitors);
+    pool_free(bars);
   }
 }
 
@@ -103,8 +103,8 @@ void multihead_resize(){
   XRRCrtcInfo *crtc_info;
   monitor *m;
   int i = 0;
-  list_foreach_noroot(monitors){
-    m = itr->data;
+  pool_foreach(monitors){
+    m = pool_get(ind, monitors);
     crtc_info = XRRGetCrtcInfo(dpy, screen_resources, screen_resources->crtcs[i]);
     m->width = crtc_info->width;
     m->height = crtc_info->height;
@@ -151,9 +151,11 @@ monitor *find_monitor(){
  * the display in X
  */
 void multihead_setup(){
-  monitors = list_init();
-  monitor *monitor = malloc(sizeof(monitor));
-  monitor->windows = list_init();
+  monitor *monitor;
+
+  monitors = pool_init(1);
+  monitor = malloc(sizeof(monitor));
+  monitor->windows = pool_init(MAX_WINDOWS);
   monitor->width = XWidthOfScreen(screen);
   monitor->height = XHeightOfScreen(screen);
   monitor->x = 0;
@@ -164,8 +166,7 @@ void multihead_setup(){
   monitor->fullscreen = 0;
   rr_event_base = -1;
   rr_error_base = -1;
-  node *n = list_push(monitors);
-  n->data = monitor;
+  pool_push(monitor, monitors);
 }
 
 /*
@@ -173,14 +174,12 @@ void multihead_setup(){
  * the windows it holds
  */
 void multihead_free(){
-  list_foreach_noroot(monitors){
-    monitor *m = (monitor*)itr->data;
-    if(m != NULL && m->windows != NULL){
-      list_free(m->windows);
-    }
+  if(monitors != NULL &&
+     bars != NULL){
+    pool_free(pool_get(0, monitors));
+    pool_free(monitors);
+    pool_free(bars);
   }
-  list_free(monitors);
-  list_free(bars);
 }
 
 /*
@@ -190,12 +189,9 @@ void multihead_free(){
  * Xrandr
  */
 void multihead_resize(){
-  monitor *m;
-  list_foreach_noroot(monitors){
-    m = (monitor*)itr->data;
-    m->width = XWidthOfScreen(screen);
-    m->height = XHeightOfScreen(screen);
-  }
+  monitor *m = pool_get(0, monitors);
+  m->width = XWidthOfScreen(screen);
+  m->height = XHeightOfScreen(screen);
 }
 
 /*
@@ -203,7 +199,7 @@ void multihead_resize(){
  * monitor
  */
 monitor *find_monitor(){
-  return list_get(monitors,1)->data;
+  return pool_get(0, monitors);
 }
 
 #endif
@@ -222,7 +218,6 @@ void multihead_addbar(Window win){
     borderwidth,
     depth;
   monitor *m;
-  node *newbar;
 
   XGetGeometry(
     dpy,
@@ -232,15 +227,9 @@ void multihead_addbar(Window win){
     &w, &h,
     &borderwidth,
     &depth
-  ); 
+  );
 
   m = monitor_atpos(x, y);
-
-  newbar = list_push(bars);
-  newbar->data = malloc(sizeof(int));
-  *(int*)newbar->data = h;
-  newbar->data_noptr = win;
-  
   m->height -= h;
 
   /*
@@ -251,30 +240,23 @@ void multihead_addbar(Window win){
    */
   if(y <= (m->height+m->y) / 2){
     m->y += h;
-    /*
-     * Misuse of this member
-     * to store this
-     * information
-     */
-    newbar->size = 1;
   }
+
+  pool_push((void*)win, bars);
 }
 
 /*
  * Does the opposite of
  * multihead_addbar()
  */
-void multihead_delbar(Window win){
-  monitor *m = find_monitor();
+void multihead_delbar(int pos){
+  pool_pop(pos, bars);
 
-  node *bar = list_find(bars, NULL, win);
-  if(bar != NULL){
-    m->height += *(int*)bar->data;
-    if(bar->size){
-      m->y -= *(int*)bar->data;
-    }
-    list_pop(bars, bar);
-  }
+  multihead_resize();
+
+  /*
+   * TODO: Flesh out
+   */
 }
 
 /*
@@ -285,7 +267,7 @@ void multihead_delbar(Window win){
  * tile_existing())
  */
 int multihead_isbar(Window win){
-  return (list_find(bars, NULL, win) != NULL);
+  return (pool_find((void*)win, bars) > -1);
 }
 
 /*
@@ -295,10 +277,10 @@ int multihead_isbar(Window win){
 monitor *monitor_atpos(int x, int y){
   int mon_x, mon_y,
       mon_w, mon_h;
-  monitor *m = monitors->next->data;
+  monitor *m = pool_get(0, monitors);
 
-  list_foreach_noroot(monitors){
-    m = (monitor*)itr->data;
+  pool_foreach(monitors){
+    m = pool_get(ind, monitors);
     mon_x = m->x;
     mon_y = m->y;
     mon_w = m->width;

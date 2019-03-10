@@ -2,14 +2,18 @@
  * config.h: ntwm configuration
  */
 
-#define VER "1.2.5"
+#define VER "1.2.6"
 #define GAPS 50
 #define STACK_RATIO 0.3
 #define DIALOG_RATIO 0.7
 #define MULTIHEAD /* multimonitor support */
-#define LOGGING /* startup/shutdown logging */
+/*#define LOGGING_NO_STDIO*/ /* avoid including stdio.h for error/info logging (decreases filesize) */
 #define MASK Mod1Mask
 #define SHIFT ShiftMask
+
+#define MAX_MONITORS 2 /* memory fine-tuning options - ntwm will use no more memory than is specified here */
+#define MAX_WINDOWS 16
+#define MAX_BARS     2
 
 #define TERMCMD "xterm"
 
@@ -52,6 +56,11 @@ const key keys[] = {
 };
 
 typedef void (*func)();
+
+#define ENABLE_GRID
+#define ENABLE_DUALSTACK
+#define ENABLE_FIBONACCI
+#define ENABLE_BOTTOMSTACK
 
 static void tile_grid();
 static void tile_dualstack();
