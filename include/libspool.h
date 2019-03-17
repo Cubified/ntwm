@@ -36,7 +36,7 @@ static int next_unset_bit(int n, int start);
 
 static pool *pool_init();
 static void pool_push(void *data, pool *p);
-/* pool_pop(int ind, pool *p); - Defined as macro*/
+/* pool_pop(int ind, pool *p); - Defined as macro */
 static int  pool_adj(int ind, int dir, pool *p);
 static int  pool_find(void *data, pool *p);
 static int  pool_check(int ind, pool *p);

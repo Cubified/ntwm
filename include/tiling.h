@@ -74,30 +74,33 @@ void toggle_above(Window win){
  */
 void cycle_monitors(Window win, int dir){
   if(x_valid_window(win)){
-    int v = -1,
-        p = 0;
-    monitor *m = pool_get(0, monitors);
-    pool_foreach(monitors){
-      m = pool_get(ind, monitors);
-      if((p = pool_find((void*)win, m->windows)) > -1){
-        break;
-      }
+    int oldm_pos = -1,
+        newm_pos = -1,
+        oldw_pos = -1;
+    monitor *oldm = find_monitor(),
+            *newm = NULL;
+
+    oldm_pos = pool_find((void*)oldm, monitors);
+    newm_pos = pool_adj(oldm_pos, dir, monitors);
+    oldw_pos = pool_find((void*)win, oldm->windows);
+    newm = pool_get(newm_pos, monitors);
+
+    if(oldm_pos == -1 ||
+       newm_pos == -1 ||
+       oldw_pos == -1 ||
+       newm == NULL){
+      return;
     }
 
-    v = pool_adj(p, dir, monitors);
-    if(v != -1){
-      pool_pop(p, m->windows);
+    pool_pop(oldw_pos, oldm->windows);
+    pool_push((void*)win, newm->windows);
 
-      m = pool_get(v, monitors);
-      pool_push((void*)win, m->windows);
+    x_set_cursorpos(
+      newm->x + (newm->width / 2),
+      newm->y + (newm->height / 2)
+    );
 
-      x_set_cursorpos(
-        m->x + (m->width / 2),
-        m->y + (m->height / 2)
-      );
-
-      tile();
-    }
+    tile();
   }
 }
 

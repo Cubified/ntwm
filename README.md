@@ -172,6 +172,7 @@ In no particular order:
 ### v1.2.6
 - Replace linked list implementation with `libspool.h`, increasing filesize but treating memory more responsibly and executing more quickly
 - Allow for the disabling of certain tiling modes, decreasing filesize
+- Fix monitor movement functionality
 
 ### v1.2.5
 - Add support for two types of client message (`NET_WM_STATE_ABOVE` and `NET_WM_STATE_FULLSCREEN`) with more to come

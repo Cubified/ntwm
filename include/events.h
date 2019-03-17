@@ -165,10 +165,10 @@ void key_press(XEvent *e){
           next_mode();
           break;
         case cmd_nwin:
-          cycle_windows(current_monitor->windows, focused, 1);
+          cycle_windows(current_monitor->windows, focused, DIR_RIGHT);
           break;
         case cmd_pwin:
-          cycle_windows(current_monitor->windows, focused, 0);
+          cycle_windows(current_monitor->windows, focused, DIR_LEFT);
           break;
         case cmd_reset:
           reset(map_request);
