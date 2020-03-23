@@ -296,7 +296,7 @@ void tile_fibonacci(monitor *m){
 
 #endif
 
-#ifdef TILE_BOTTOMSTACK
+#ifdef ENABLE_BOTTOMSTACK
 
 /*
  *  ----------- 
