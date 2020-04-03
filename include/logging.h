@@ -11,6 +11,7 @@
 #endif
 
 #define STDOUT 1
+#define STDERR 2
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -33,17 +34,29 @@ int len(char *str){
   return o;
 }
 
+void print_len(char *str, int len){
+  write(STDOUT, str, len);
+}
+
 void print(char *str){
-  write(STDOUT, str, len(str));
+  print_len(str, len(str));
+}
+
+void print_err_len(char *str, int len){
+  write(STDERR, str, len);
+}
+
+void print_err(char *str){
+  print_err_len(str, len(str));
 }
 
 /***/
 
 void info(char *str, ...){
 #ifdef LOGGING_NO_STDIO
-  print(ANSI_COLOR_CYAN "=> ");
+  print_len(ANSI_COLOR_CYAN "=> ", 8);
   print(str);
-  print(ANSI_COLOR_RESET "\n");
+  print_len(ANSI_COLOR_RESET "\n", 5);
 #else
   va_list args;
 
@@ -57,9 +70,9 @@ void info(char *str, ...){
 
 void error(char *str, ...){
 #ifdef LOGGING_NO_STDIO
-  print(ANSI_COLOR_RED "==> Error: ");
-  print(str);
-  print(ANSI_COLOR_RESET "\n");
+  print_err_len(ANSI_COLOR_RED "==> Error: ", 16);
+  print_err(str);
+  print_err_len(ANSI_COLOR_RESET "\n", 5);
 #else
   va_list args;
 
@@ -73,9 +86,9 @@ void error(char *str, ...){
 
 void debug(char *str, ...){
 #ifdef LOGGING_NO_STDIO
-  print(ANSI_COLOR_GREEN "=> Debug: ");
+  print_len(ANSI_COLOR_GREEN "=> Debug: ", 15);
   print(str);
-  print(ANSI_COLOR_RESET "\n");
+  print_len(ANSI_COLOR_RESET "\n", 5);
 #else
   va_list args;
 
