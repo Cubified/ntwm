@@ -42,7 +42,7 @@ static void x_set_cursor(unsigned int cursor_name);
 static void x_set_focused(Window win);
 static void x_query_window(Window win, int *x, int *y, unsigned int *w, unsigned int *h);
 static int x_send_event(Window win, Atom atom);
-static int on_x_error(Display *dpy, XErrorEvent *e);
+static int x_on_error(Display *dpy, XErrorEvent *e);
 static int x_valid_window(Window win);
 static int x_window_gettype(Window win);
 static int x_is_child(Window win);
@@ -66,7 +66,7 @@ void x_init(){
   above = 0;
   bars = pool_init(MAX_BARS);
 
-  XSetErrorHandler(&on_x_error);
+  XSetErrorHandler(&x_on_error);
 
   x_select_input(root);
   x_establish_keybinds(root);
@@ -297,7 +297,7 @@ int x_send_event(Window win, Atom atom){
  * (Note: does not quit
  * on non-fatal error)
  */
-int on_x_error(Display *dpy, XErrorEvent *e){
+int x_on_error(Display *dpy, XErrorEvent *e){
   if(e->error_code == 10){
     if(!has_thrown){
       error("Another window manager is already running.");
@@ -305,11 +305,9 @@ int on_x_error(Display *dpy, XErrorEvent *e){
       quit();
     }
   } else {
-#ifdef LOGGING_NO_STDIO
-    error(last_call);
-#else
-    error("%s (error code %i)", last_call, e->error_code);
-#endif
+    char text_buf[256];
+    XGetErrorText(dpy, e->error_code, text_buf, sizeof(text_buf));
+    error(text_buf);
   }
   last_err = e->error_code;
   return 0;
@@ -354,6 +352,9 @@ int x_window_gettype(Window win){
   if(success == Success && prop != NULL){
     char *name = XGetAtomName(dpy, *(Atom*)prop);
     int hash = hash_str(name);
+    if(hash == -1){
+      return window_normal;
+    }
 
     free(prop);
     free(name);

@@ -21,8 +21,6 @@ void map_request(XEvent *e){
   XMapRequestEvent *ev = &e->xmaprequest;
   int wintype = x_window_gettype(ev->window);
   
-  last_call = "map";
-  
   if((wintype == window_normal ||
       wintype == window_utility) &&
       !x_is_child(ev->window)){
@@ -76,7 +74,6 @@ void configure_request(XEvent *e){
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
   int wintype = x_window_gettype(ev->window);
 
-  last_call = "configure";
   if(wintype != window_dialog){
     x_move_resize(
       ev->window,
@@ -96,8 +93,6 @@ void unmap_notify(XEvent *e){
   XUnmapEvent *ev = &e->xunmap;
   pool *list = find_monitor()->windows;
   int ind = pool_find((void*)ev->window, list);
-
-  last_call = "unmap";
 
   if(focused == ev->window){
     if((unsigned int)~list->avail > 0){
@@ -133,8 +128,6 @@ void key_press(XEvent *e){
   XKeyEvent *ev = &e->xkey;
   KeySym keysym = XkbKeycodeToKeysym(dpy, ev->keycode, 0, 0);
   monitor *current_monitor = find_monitor();
-
-  last_call = "keypress";
 
   for(i=0;i<LENGTH(keys);i++){
     if(keys[i].keysym == keysym &&
@@ -193,7 +186,6 @@ void key_press(XEvent *e){
  */
 void enter_notify(XEvent *e){
   XCrossingEvent *ev = &e->xcrossing;
-  last_call = "enter";
 
   x_set_focused(ev->window);
 }
@@ -228,8 +220,6 @@ void client_message(XEvent *e){
  * and window tiling
  */
 void screenchange_notify(XEvent *e){
-  last_call = "screenchange";
-
   multihead_resize();
 
   tile();

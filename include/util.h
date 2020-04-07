@@ -69,6 +69,10 @@ int hash_str(char *str){
   int out = 0;
   char *c;
 
+  if(str == NULL){
+    return -1;
+  }
+
   for(c=str;*c;c++){
     out += *c - '0';
   }

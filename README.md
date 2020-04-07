@@ -253,6 +253,9 @@ In no particular order:
 - Clean up tiling functionality
 - Fix support for dual bars
 - Fix incongruency between client-toggled and window manager-wide fullscreen
+- Add more robust error handling/checking
+- Consolidate header files
+- Remove use of Xlib keysyms
 
 ## What Will (Likely) Never be Implemented
 

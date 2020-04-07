@@ -21,8 +21,6 @@ int running = 1;
 int has_thrown = 0;
 int above_enabled = 0;
 
-char *last_call = "";
-
 int last_err = 0;
 int mode_index = 0;
 int monitor_width;
